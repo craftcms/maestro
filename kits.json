@@ -83,6 +83,7 @@
             "craft": 6,
             "layers": [
                 { "layer": "Craft6/Blank", "into": "backend" },
+                { "layer": "Craft6/Starter", "into": "backend" },
                 { "layer": "Craft6/Headless", "into": "backend" },
                 "Shared/Astro",
                 "Craft6/Astro"
@@ -95,6 +96,7 @@
             "craft": 6,
             "layers": [
                 { "layer": "Craft6/Blank", "into": "backend" },
+                { "layer": "Craft6/Starter", "into": "backend" },
                 { "layer": "Craft6/Headless", "into": "backend" },
                 "Shared/Next",
                 "Craft6/Next"
@@ -107,6 +109,7 @@
             "craft": 6,
             "layers": [
                 { "layer": "Craft6/Blank", "into": "backend" },
+                { "layer": "Craft6/Starter", "into": "backend" },
                 { "layer": "Craft6/Headless", "into": "backend" },
                 "Shared/Nuxt",
                 "Craft6/Nuxt"
