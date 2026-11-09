@@ -31,16 +31,16 @@ class EnvFile
      */
     public static function merge(array $files): string
     {
-        $lines = self::lines(array_shift($files));
+        $lines = static::lines(array_shift($files));
 
         foreach ($files as $override) {
-            [$header, $entries] = self::parse($override);
+            [$header, $entries] = static::parse($override);
             $appending = false;
 
             foreach ($entries as $key => $entry) {
                 $block = [...$entry['comments'], $entry['line']];
 
-                if (($at = self::find($lines, $key)) === null) {
+                if (($at = static::find($lines, $key)) === null) {
                     if (($entry['gap'] || ! $appending) && $lines !== [] && end($lines) !== '') {
                         $lines[] = '';
                     }
@@ -51,7 +51,7 @@ class EnvFile
                     continue;
                 }
 
-                $start = $entry['comments'] === [] ? $at : self::commentStart($lines, $at);
+                $start = $entry['comments'] === [] ? $at : static::commentStart($lines, $at);
                 array_splice($lines, $start, $at - $start + 1, $block);
             }
 
@@ -74,8 +74,8 @@ class EnvFile
     {
         [$header, $entries, $comments, $gap] = [[], [], [], false];
 
-        foreach (self::lines($contents) as $line) {
-            if (preg_match(self::KEY, $line, $match)) {
+        foreach (static::lines($contents) as $line) {
+            if (preg_match(static::KEY, $line, $match)) {
                 $entries[$match[1]] = ['comments' => $comments, 'line' => $line, 'gap' => $gap];
                 [$comments, $gap] = [[], false];
             } elseif (trim($line) === '') {
@@ -117,13 +117,13 @@ class EnvFile
      */
     public static function remove(string $contents, string $key): string
     {
-        $lines = self::lines($contents);
+        $lines = static::lines($contents);
 
-        if (($at = self::find($lines, $key)) === null) {
+        if (($at = static::find($lines, $key)) === null) {
             return $contents;
         }
 
-        $start = self::commentStart($lines, $at);
+        $start = static::commentStart($lines, $at);
         array_splice($lines, $start, $at - $start + 1);
 
         // Don't leave two blank lines in a row.
@@ -152,7 +152,7 @@ class EnvFile
     protected static function find(array $lines, string $key): ?int
     {
         foreach ($lines as $i => $line) {
-            if (preg_match(self::KEY, $line, $match) && $match[1] === $key) {
+            if (preg_match(static::KEY, $line, $match) && $match[1] === $key) {
                 return $i;
             }
         }

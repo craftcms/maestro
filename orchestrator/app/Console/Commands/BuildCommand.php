@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\DdevConfig;
 use App\EnvFile;
 use App\Maestro;
 use Illuminate\Console\Command;
@@ -38,10 +39,10 @@ class BuildCommand extends Command
             Process::run(['cp', '-a', $maestro->kitsPath($mount['layer']).'/.', $target])->throw();
         }
 
-        // .env files merge instead of overriding: see EnvFile.
-        foreach (self::envFiles($maestro, $handle) as $path => $sources) {
+        // .env files and DDEV config merge instead of overriding: see EnvFile and DdevConfig.
+        foreach (self::mergedFiles($maestro, $handle) as $path => $sources) {
             if (count($sources) > 1) {
-                File::put("{$build}/{$path}", EnvFile::merge(array_map(File::get(...), $sources)));
+                File::put("{$build}/{$path}", self::merger($path)::merge(array_map(File::get(...), $sources)));
             }
         }
 
@@ -59,18 +60,34 @@ class BuildCommand extends Command
     }
 
     /**
-     * Every .env file in the kit's layers, by build path, with each layer's copy in build order.
+     * The class that merges a build path across layers, or null if later layers replace it.
+     *
+     * @return class-string<EnvFile>|null
+     */
+    public static function merger(string $path): ?string
+    {
+        return match (true) {
+            DdevConfig::matches($path) => DdevConfig::class,
+            EnvFile::matches($path) => EnvFile::class,
+            default => null,
+        };
+    }
+
+    /**
+     * Every merged file in the kit's layers, by build path, with each layer's copy in build order.
      *
      * @return array<string, list<string>>
      */
-    protected static function envFiles(Maestro $maestro, string $handle): array
+    protected static function mergedFiles(Maestro $maestro, string $handle): array
     {
         $files = [];
 
         foreach ($maestro->layers($handle) as $mount) {
             foreach (File::allFiles($maestro->kitsPath($mount['layer']), true) as $file) {
-                if (EnvFile::matches($file->getFilename())) {
-                    $files[ltrim("{$mount['into']}/{$file->getRelativePathname()}", '/')][] = $file->getPathname();
+                $path = ltrim("{$mount['into']}/{$file->getRelativePathname()}", '/');
+
+                if (self::merger($path)) {
+                    $files[$path][] = $file->getPathname();
                 }
             }
         }

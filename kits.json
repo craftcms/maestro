@@ -14,35 +14,35 @@
         "twig-5": {
             "name": "Twig (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/Guestbook", "Craft5/Twig"],
+            "layers": ["Craft5/Blank", "Craft5/DDEV", "Craft5/Starter", "Craft5/Guestbook", "Craft5/Twig"],
             "repository": "craftcms/starter-twig",
             "branch": "5.x"
         },
         "twig-6": {
             "name": "Twig (Craft 6)",
             "craft": 6,
-            "layers": ["Craft6/Blank", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Twig"],
+            "layers": ["Craft6/Blank", "Craft6/DDEV", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Twig"],
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
         },
         "blade-6": {
             "name": "Blade (Craft 6)",
             "craft": 6,
-            "layers": ["Craft6/Blank", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Blade"],
+            "layers": ["Craft6/Blank", "Craft6/DDEV", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Blade"],
             "repository": "craftcms/starter-blade",
             "branch": "6.x"
         },
         "wordpress-5": {
             "name": "WordPress (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/WordPress"],
+            "layers": ["Craft5/Blank", "Craft5/DDEV", "Craft5/Starter", "Craft5/WordPress"],
             "repository": "craftcms/starter-wordpress",
             "branch": "5.x"
         },
         "europa-5": {
             "name": "Europa Museum (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/Europa"],
+            "layers": ["Craft5/Blank", "Craft5/DDEV", "Craft5/Starter", "Craft5/Europa"],
             "seed": { "file": "seed.sql", "dump": "php craft demos/dump" },
             "repository": "craftcms/europa-museum",
             "branch": "5.x"
@@ -53,7 +53,8 @@
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
                 { "layer": "Craft5/Starter", "into": "backend" },
-                { "layer": "Craft5/Headless", "into": "backend" },
+                "Craft5/DDEV",
+                "Craft5/Headless",
                 "Shared/Nuxt",
                 "Craft5/Nuxt"
             ],
@@ -66,7 +67,8 @@
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
                 { "layer": "Craft5/Starter", "into": "backend" },
-                { "layer": "Craft5/Headless", "into": "backend" },
+                "Craft5/DDEV",
+                "Craft5/Headless",
                 "Shared/Next",
                 "Craft5/Next"
             ],
@@ -79,7 +81,8 @@
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
                 { "layer": "Craft5/Starter", "into": "backend" },
-                { "layer": "Craft5/Headless", "into": "backend" },
+                "Craft5/DDEV",
+                "Craft5/Headless",
                 "Shared/Astro",
                 "Craft5/Astro"
             ],
@@ -92,7 +95,8 @@
             "layers": [
                 { "layer": "Craft6/Blank", "into": "backend" },
                 { "layer": "Craft6/Starter", "into": "backend" },
-                { "layer": "Craft6/Headless", "into": "backend" },
+                "Craft6/DDEV",
+                "Craft6/Headless",
                 "Shared/Astro",
                 "Craft6/Astro"
             ],
@@ -105,7 +109,8 @@
             "layers": [
                 { "layer": "Craft6/Blank", "into": "backend" },
                 { "layer": "Craft6/Starter", "into": "backend" },
-                { "layer": "Craft6/Headless", "into": "backend" },
+                "Craft6/DDEV",
+                "Craft6/Headless",
                 "Shared/Next",
                 "Craft6/Next"
             ],
@@ -118,7 +123,8 @@
             "layers": [
                 { "layer": "Craft6/Blank", "into": "backend" },
                 { "layer": "Craft6/Starter", "into": "backend" },
-                { "layer": "Craft6/Headless", "into": "backend" },
+                "Craft6/DDEV",
+                "Craft6/Headless",
                 "Shared/Nuxt",
                 "Craft6/Nuxt"
             ],

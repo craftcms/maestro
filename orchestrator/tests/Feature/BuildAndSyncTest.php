@@ -17,6 +17,22 @@ beforeEach(function () {
         'Base/Kit/composer.json' => 'kit',
         'Base/Headless/config/general.php' => 'headless',
         'Base/Frontend/frontend/package.json' => 'frontend',
+        'Base/Starter/.ddev/config.yaml' => <<<'YAML'
+            name: craft
+            php_version: "8.5"
+            database:
+                type: mysql
+                version: "8.0"
+            web_environment: []
+
+            YAML,
+        'Base/Kit/.ddev/config.yaml' => <<<'YAML'
+            name: demo
+            database:
+                type: postgres
+                version: "17"
+
+            YAML,
         'Base/Blank/.env.example' => <<<'ENV'
             # Header from the skeleton
 
@@ -212,4 +228,47 @@ test('sync writes .env changes key by key to the layers that set them', function
     File::put("{$this->root}/build/backend/.env.example", str_replace('DB_PORT=5432', 'DB_PORT=3306', File::get("{$kits}/Base/Blank/.env.example")));
     $this->artisan('sync')->assertSuccessful();
     expect(File::get("{$kits}/Base/Headless/.env.example"))->toBe("DB_PORT=3306\n");
+});
+
+test('build merges DDEV config by top-level key, and sync writes each key back to its layer', function () {
+    $this->artisan('build', ['kit' => 'demo'])->assertSuccessful();
+
+    $config = "{$this->root}/build/.ddev/config.yaml";
+    $kits = "{$this->root}/kits";
+    // Nested maps replace the earlier value whole; keys keep the base layer's order.
+    expect(File::get($config))->toBe(<<<'YAML'
+        name: demo
+        php_version: "8.5"
+        database:
+            type: postgres
+            version: "17"
+        web_environment: []
+
+        YAML);
+
+    File::put($config, str_replace(
+        ['php_version: "8.5"', 'web_environment: []'],
+        ['php_version: "8.4"', "web_environment:\n  - FOO=bar"],
+        File::get($config),
+    ));
+    $this->artisan('sync')->assertSuccessful();
+
+    // Both keys are set by Starter, so the Kit layer's override stays as it was.
+    expect(File::get("{$kits}/Base/Starter/.ddev/config.yaml"))->toBe(<<<'YAML'
+        name: craft
+        php_version: "8.4"
+        database:
+            type: mysql
+            version: "8.0"
+        web_environment:
+          - FOO=bar
+
+        YAML)
+        ->and(File::get("{$kits}/Base/Kit/.ddev/config.yaml"))->toBe(<<<'YAML'
+        name: demo
+        database:
+            type: postgres
+            version: "17"
+
+        YAML);
 });

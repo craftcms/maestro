@@ -1,0 +1,9 @@
+web_extra_exposed_ports:
+  - name: astro
+    container_port: 4321
+    http_port: 4321
+    https_port: 4322
+web_extra_daemons:
+  - name: "astro"
+    command: "cd /var/www/html/frontend && npm run dev -- --host"
+    directory: "/var/www/html/frontend"

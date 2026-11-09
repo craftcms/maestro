@@ -106,9 +106,9 @@ class SyncCommand extends Command
 
             $sources = $this->sources($maestro, $path, $mounts);
 
-            // A merged .env file syncs key by key, unless one editable layer owns all of it.
-            if (EnvFile::matches($path) && (count($sources) > 1 || ($sources !== [] && $maestro->isSkeleton($sources[0][0])))) {
-                $this->syncEnvFile($maestro, $path, $mounts, $editable, [$layer, $target]);
+            // A merged file syncs key by key, unless one editable layer owns all of it.
+            if (($merger = BuildCommand::merger($path)) && (count($sources) > 1 || ($sources !== [] && $maestro->isSkeleton($sources[0][0])))) {
+                $this->syncMergedFile($merger, $maestro, $path, $mounts, $editable, [$layer, $target]);
 
                 continue;
             }
@@ -144,20 +144,21 @@ class SyncCommand extends Command
     }
 
     /**
-     * Sync a merged .env file key by key. A changed key goes to the most specific
+     * Sync a merged file key by key. A changed key goes to the most specific
      * editable layer that sets it, a new one to the layer that owns the file, and
      * a deleted one is removed from every editable layer that sets it.
      *
+     * @param  class-string<EnvFile>  $merger
      * @param  array{string, string}  $fallback  Layer and path for keys no editable layer sets
      */
-    protected function syncEnvFile(Maestro $maestro, string $path, array $mounts, array $editable, array $fallback): void
+    protected function syncMergedFile(string $merger, Maestro $maestro, string $path, array $mounts, array $editable, array $fallback): void
     {
         $built = File::get("{$maestro->buildPath()}/{$path}");
-        $merge = fn () => EnvFile::merge(array_map(fn (array $source) => File::get($source[1]), $this->sources($maestro, $path, $mounts)));
-        $sets = fn (array $source, string $key) => isset(EnvFile::parse(File::get($source[1]))[1][$key]);
+        $merge = fn () => $merger::merge(array_map(fn (array $source) => File::get($source[1]), $this->sources($maestro, $path, $mounts)));
+        $sets = fn (array $source, string $key) => isset($merger::parse(File::get($source[1]))[1][$key]);
 
-        [, $after] = EnvFile::parse($built);
-        [, $before] = EnvFile::parse($merge());
+        [, $after] = $merger::parse($built);
+        [, $before] = $merger::parse($merge());
         $writes = [];
 
         foreach ($after as $key => $entry) {
@@ -180,7 +181,7 @@ class SyncCommand extends Command
 
         foreach ($writes as $target => $write) {
             File::ensureDirectoryExists(dirname($target));
-            File::put($target, EnvFile::merge([File::exists($target) ? File::get($target) : '', EnvFile::render($write['entries'])]));
+            File::put($target, $merger::merge([File::exists($target) ? File::get($target) : '', $merger::render($write['entries'])]));
             info("Synced {$path} keys ".implode(', ', $write['keys'])." to {$write['layer']}");
         }
 
@@ -196,7 +197,7 @@ class SyncCommand extends Command
                     continue;
                 }
 
-                $remaining = EnvFile::remove(File::get($source), $key);
+                $remaining = $merger::remove(File::get($source), $key);
                 $remaining === '' ? File::delete($source) : File::put($source, $remaining);
                 info("Removed {$key} from {$path} in {$layer}");
             }

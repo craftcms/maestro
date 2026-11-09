@@ -1,0 +1,9 @@
+web_extra_exposed_ports:
+  - name: nuxt
+    container_port: 3000
+    http_port: 3000
+    https_port: 3001
+  - name: devtools
+    container_port: 9310
+    http_port: 9310
+    https_port: 9311

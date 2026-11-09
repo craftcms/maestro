@@ -1,26 +1,6 @@
 name: starter-next
-type: laravel
-docroot: backend/public
-php_version: "8.5"
-nodejs_version: "22"
-webserver_type: nginx-fpm
-composer_root: backend
-xdebug_enabled: false
 additional_hostnames:
   - api.starter-next
-database:
-    type: postgres
-    version: "17"
-use_dns_when_possible: true
-composer_version: "2"
-corepack_enable: false
-upload_dirs:
-  - uploads
-web_extra_exposed_ports:
-  - name: next
-    container_port: 3000
-    http_port: 3000
-    https_port: 3001
 web_environment:
   - VIRTUAL_HOST=starter-next.ddev.site,api.starter-next.ddev.site
   - APP_URL=https://api.starter-next.ddev.site
