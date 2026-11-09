@@ -1,5 +1,5 @@
 docroot: backend/web
-nodejs_version: "20"
+nodejs_version: "24"
 composer_root: backend
 upload_dirs:
   - uploads

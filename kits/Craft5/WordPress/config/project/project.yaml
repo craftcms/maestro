@@ -1,4 +1,4 @@
-dateModified: 1794221315
+dateModified: 1794255337
 email:
   fromEmail: travis@pixelandtonic.com
   fromName: travis@pixelandtonic.com
@@ -27,7 +27,7 @@ plugins:
   ckeditor:
     edition: standard
     enabled: true
-    schemaVersion: 3.0.0.0
+    schemaVersion: 5.6.0.0
   comments:
     edition: standard
     enabled: true
