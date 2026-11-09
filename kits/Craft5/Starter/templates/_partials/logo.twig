@@ -1,0 +1,11 @@
+{% import '_utilities/image' as img %}
+
+<a href="/" class="text-red-600 {% if global.logo|length %}block w-12 h-12{% endif %}">
+  {% if global.logo|length %}
+    <span class="sr-only">{{ siteName }}</span>
+    {% set logo = global.logo.eagerly().all() %}
+    {{ img.pictures(logo, true) }}
+  {% else %}
+    {{ siteName }}
+  {% endif %}
+</a>

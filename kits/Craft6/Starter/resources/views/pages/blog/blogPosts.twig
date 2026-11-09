@@ -1,0 +1,14 @@
+{% extends "pages/default" %}
+{% import '_utilities/teaser' as article %}
+
+{% block landing %}
+  <section class="bg-slate-100">
+    <div class="container mx-auto divide-y divide-slate-300 py-12 px-2">
+      <h2 class="font-bold text-4xl mb-2">Other articles</h2>
+      {% set posts = craft.entries.section('blogPosts').id('not ' ~ entry.id).limit(3).all() %}
+      {% for post in posts %}
+        {{ article.teaser({post: post}) }}
+      {% endfor %}    
+    </div>
+  </section>
+{% endblock %}

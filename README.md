@@ -1,196 +1,72 @@
 <h1 align="center">Maestro</h1>
 
-## Introduction
+Maestro builds the [Craft CMS starter kits](https://craftcms.com/starters). Kits are made of layers in this repository. On every push to `main`, Maestro builds each kit and pushes the result to that kit's repository, so a fix lands once here instead of once per starter.
 
-Maestro is an orchestrator for the [Laravel starter kits](https://laravel.com/starter-kits). You make changes within this repository that will get built out to the individual starter kit repositories.
+Forked from [laravel/maestro](https://github.com/laravel/maestro), which does the same for the Laravel starter kits.
 
-[Read more about the various starter kit flavors](#starter-kit-flavors).
+## How kits are built
 
-## Contributing
+`kits.json` lists every kit and the layers it is built from. A build copies each layer into `build/` in order, and later layers override earlier ones:
 
-To contribute bug fixes or features to any of the starter kits, you need to build and run the flavor you want to update.
+```
+kits/
+  Craft5/
+    Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
+    Starter/    what every Craft 5 starter shares: content model, templates, DDEV, Cloud
+    Twig/       what only starter-twig adds
+  Craft6/
+    Blank/      mirror of craftcms/craft@6.x
+    Starter/
+    Twig/
+```
 
-### Initial Setup
+| Kit | Layers | Pushed to |
+| --- | --- | --- |
+| `twig` | Craft5/Blank → Craft5/Starter → Craft5/Twig | `craftcms/starter-twig@5.x` |
+| `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Twig | `craftcms/starter-twig@6.x` |
 
-Before running any `php artisan`, Composer, or npm scripts in `orchestrator/`, install the PHP and Node.js dependencies:
+Put a file in the lowest layer that every kit needing it shares. To add a kit, add its layer folder and an entry in `kits.json`.
+
+## Working on a kit
 
 ```bash
 cd orchestrator
 composer install
-npm install
+
+php artisan build twig     # build a kit into ../build
+# ...install, run, and edit the kit in ../build...
+php artisan sync           # copy your edits back into kits/
 ```
 
-### Building a Starter Kit
+`build/` is its own Git repository, snapshotted at build time, so `sync` copies back exactly what changed since then, following the kit's `.gitignore`:
 
-From the `orchestrator` directory, build a kit by running the following command:
+- A changed or deleted file goes to the most specific layer that has it.
+- A new file goes to the most specific layer that already has its directory, or to `--layer=`.
+- Skeleton layers are never written; changing a skeleton file creates an override in a layer above it.
 
-```bash
-php artisan build
-```
+Review `git status` before committing. Files Craft generates during install, such as `config/license.key`, will show up too.
 
-This will prompt you to build the starter kit you want. Alternatively, you can use the `--kit` parameter and the `--workos`, `--components`, `--teams` or `--blank` flags to build directly:
+### Updating Craft in a kit
 
-```bash
-php artisan build --kit=vue # Builds the Vue (Fortify) starter kit
-php artisan build --kit=react --workos # Builds the React (WorkOS) starter kit
-php artisan build --kit=livewire --blank # Builds Blank Livewire starter kit
-php artisan build --kit=livewire --teams # Builds Livewire (Fortify Teams) starter kit
-php artisan build --kit=vue --workos --teams # Builds Vue (WorkOS Teams) starter kit
-```
+Project config YAML is tied to the Craft version that wrote it, so updating Craft means installing on the old version, then upgrading:
 
-Use `--chisel` when you need to include the Fortify feature-selection scripts in the build output:
+1. Build the kit and `craft install` it with its current `composer.lock`.
+2. Raise the constraint in `composer.json`, run `composer update`, then `craft up`.
+3. Run `php artisan sync` to bring back the new `composer.lock` and the rewritten project config.
 
-```bash
-php artisan build --kit=vue --chisel
-```
+The Tests workflow fails when a kit's project config doesn't match its Craft version.
 
-### WorkOS
+## Automation
 
-When building a **WorkOS** variant for a starter kit, you can add your **WorkOS** client ID and the API key in the `orchestrator/.env` file; with this configured, when running the kit, it will copy these values over to the build directory.
+- **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, and requests the home page.
+- **Build and Push Kit Changes** builds every kit on `main` and pushes the result to the kit's repository and branch. It needs a `STARTER_KIT_TOKEN` secret that can push to those repositories.
+- **Sync Craft Skeleton** opens a weekly pull request that refreshes the `*/Blank` layers from `craftcms/craft`.
 
-### Running the Starter Kit
+## Craft 6 notes
 
-Once you've built the kit, you can run it with the following command:
+Craft 6 projects are Laravel applications. The Craft 6 layers follow the `craftcms/craft@6.x` skeleton: templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The Craft 6 project config was produced by upgrading the Craft 5 kit's database with `php artisan craft:up` and writing it out again.
 
-```bash
-composer kit:run
-```
+While the Craft 6 ecosystem is in alpha:
 
-This command requires the selected starter kit to have already been built into `build/`.
-
-This will start both the standard Laravel development server and a file watcher that automatically copies changes from the `build` folder back to the correct base kit directory.
-
-> [!NOTE]
-> While the `build` directory is git ignored, that's where you should make changes to the kits. The file watcher will automatically copy your changes back to the correct location.
-
-### Linting Starter Kits
-
-From the `orchestrator` directory, run:
-
-```bash
-composer kits:lint
-```
-
-This command runs Pint on `kits/` and `browser_tests/` first, then loops over all Inertia variants, builds each variant, runs `npm install`, `npm run build`, and `npm run check:fix` in `build/`, and then runs `npm run watch:kits -- --initial-sync-only` to sync changes back to `kits/`.
-
-> [!WARNING]
-> Stop `composer kit:run` before running `composer kits:lint` or `composer kits:check`. Those commands delete and rebuild `build/`, and the active watcher can sync those deletions back to `kits/`. `composer kits:pint` is safe to run while the watcher is active.
-
-To run only the Pint step without the frontend lint pass:
-
-```bash
-composer kits:pint
-```
-
-### Browser Tests
-
-From the `orchestrator` directory, run:
-
-```bash
-composer kits:browser-tests
-```
-
-This builds each Fortify variant (4 base + 4 teams), copies the appropriate browser test suite, installs Pest + Playwright, and runs the tests — matching the steps in the CI workflow.
-
-Browser tests are organized in three layers under `browser_tests/`:
-
-- `bootstrap/` — shared Pest config, TestCase, and phpunit.xml (copied for all variants)
-- `common/` — Fortify browser tests (copied for non-teams variants)
-- `teams/` — Teams browser tests (copied for teams variants)
-
-Each variant runs exactly one test suite (common or teams), not both.
-
-### Selective Execution
-
-Pass `--livewire`, `--react`, `--svelte`, and/or `--vue` to target specific frameworks.
-Pass `--blank`, `--fortify`, `--workos`, `--components`, and/or `--teams` to target specific variants.
-Combine both to narrow down exactly which kit variants to run:
-
-```bash
-composer kits:check -- --react --svelte
-composer kits:check -- --vue --svelte --fortify     # Vue and Svelte, Fortify variants only
-composer kits:check -- --livewire --fortify --workos # Livewire Fortify and WorkOS only
-composer kits:check -- --workos                      # all frameworks, WorkOS variant only
-composer kits:lint -- --vue
-composer kits:lint -- --livewire                     # runs only the shared Pint step (no frontend lint phase)
-composer kits:browser-tests -- --vue
-```
-
-No flags runs the full default matrix for each command.
-
-### Submitting Changes
-
-After making the changes in `build` and testing that they are working, simply commit your code and create a PR with these changes.
-
-After your PR is merged, **Maestro** will automatically push the changes directly to the affected starter kit repositories.
-
-## Starter Kit Flavors
-
-We have two stacks of starter kits: **Inertia** and **Livewire**. For these stacks, we have several different variations within:
-
-### Livewire
-
-1. **Blank:** a minimal starter kit with no authentication scaffolding.
-2. **Fortify:** starter kit using _Laravel Fortify_ for authentication.
-3. **Fortify (Multi-file Components):** the same as above, but with the Blade view separated from the component code.
-4. **Fortify (Teams):** starter kit using _Laravel Fortify_ with Teams support.
-5. **WorkOS:** starter kit using **[WorkOS](https://workos.com)** for authentication.
-6. **WorkOS (Teams):** starter kit using **[WorkOS](https://workos.com)** with Teams support.
-
-### Inertia
-
-1. **Blank React:** a minimal _React_ starter kit with no authentication scaffolding.
-2. **Fortify React:** _React_ starter kit using _Laravel Fortify_ for authentication.
-3. **Fortify React (Teams):** _React_ starter kit using _Laravel Fortify_ with Teams support.
-4. **WorkOS React:** _React_ starter kit using **[WorkOS](https://workos.com)** for authentication.
-5. **WorkOS React (Teams):** _React_ starter kit using **[WorkOS](https://workos.com)** with Teams support.
-6. **Blank Svelte:** a minimal _Svelte_ starter kit with no authentication scaffolding.
-7. **Fortify Svelte:** _Svelte_ starter kit using _Laravel Fortify_ for authentication.
-8. **Fortify Svelte (Teams):** _Svelte_ starter kit using _Laravel Fortify_ with Teams support.
-9. **WorkOS Svelte:** _Svelte_ starter kit using **[WorkOS](https://workos.com)** for authentication.
-10. **WorkOS Svelte (Teams):** _Svelte_ starter kit using **[WorkOS](https://workos.com)** with Teams support.
-11. **Blank Vue:** a minimal _Vue_ starter kit with no authentication scaffolding.
-12. **Fortify Vue:** _Vue_ starter kit using _Laravel Fortify_ for authentication.
-13. **Fortify Vue (Teams):** _Vue_ starter kit using _Laravel Fortify_ with Teams support.
-14. **WorkOS Vue:** _Vue_ starter kit using **[WorkOS](https://workos.com)** for authentication.
-15. **WorkOS Vue (Teams):** _Vue_ starter kit using **[WorkOS](https://workos.com)** with Teams support.
-
-### Starter Kit Hierarchy
-
-The file hierarchy is as follows:
-
-### Shared
-
-The `kits/Shared` folder contains files that are 100% identical between Livewire and Inertia kits. This includes:
-
-- **Shared/Blank:** Common blank files (config, migrations, artisan, phpunit.xml, etc.)
-- **Shared/Base:** Common base files (factories, gitignore files, etc.)
-- **Shared/Fortify:** Common Fortify files (Actions, Concerns, providers)
-- **Shared/WorkOS:** Common WorkOS files (routes, migrations, env, config)
-- **Shared/Teams/Base:** Common Teams files (models, actions, events, migrations)
-- **Shared/Teams/Fortify:** Teams files specific to Fortify (CreateNewUser action, UserFactory)
-- **Shared/Teams/WorkOS:** Teams files specific to WorkOS (CreatePersonalTeam listener, UserFactory)
-
-### Livewire
-
-Shared/Blank -> Livewire/Blank -> Shared/Base -> Livewire/Base -> Shared/Fortify -> Livewire/Fortify [-> Livewire/Components] -> Shared/Teams/Base -> Shared/Teams/Fortify -> Livewire/Teams/Base -> Livewire/Teams/Fortify
-
-OR (WorkOS): Shared/Blank -> Livewire/Blank -> Shared/Base -> Livewire/Base -> Shared/WorkOS -> Livewire/WorkOS -> Shared/Teams/Base -> Shared/Teams/WorkOS -> Livewire/Teams/Base -> Livewire/Teams/WorkOS
-
-### Inertia
-
-Shared/Blank -> Inertia/Blank/Base -> Inertia/Blank/[React|Svelte|Vue] -> Shared/Base -> Inertia/Base -> Inertia/[React|Svelte|Vue] -> Shared/Fortify -> Inertia/Fortify/Base -> Inertia/Fortify/[React|Svelte|Vue] -> Shared/Teams/Base -> Shared/Teams/Fortify -> Inertia/Teams/Base -> Inertia/Teams/[React|Svelte|Vue] -> Inertia/Teams/Fortify/Base -> Inertia/Teams/Fortify/[React|Svelte|Vue]
-
-OR (WorkOS): Shared/Blank -> Inertia/Blank/Base -> Inertia/Blank/[React|Svelte|Vue] -> Shared/Base -> Inertia/Base -> Inertia/[React|Svelte|Vue] -> Shared/WorkOS -> Inertia/WorkOS/Base -> Inertia/WorkOS/[React|Svelte|Vue] -> Shared/Teams/Base -> Shared/Teams/WorkOS -> Inertia/Teams/Base -> Inertia/Teams/[React|Svelte|Vue] -> Inertia/Teams/WorkOS/Base -> Inertia/Teams/WorkOS/[React|Svelte|Vue]
-
-Where `Shared/Blank` has the shared files across all variants, and each subsequent layer adds or overrides files.
-
-When applying a change inside the `build` folder, **Maestro** is smart enough to know where that change should be
-replicated to, always preferring to apply the change to the most specific layer. So if a file exists in both
-`Shared/Blank` and `Livewire/Fortify`, the change is replicated to `Livewire/Fortify` by default.
-
-## Orchestrator
-
-The `orchestrator` directory contains a simple Laravel application that's responsible for building and running the starter kits.
-
-It streamlines the changes by replicating the changes made in the `build` folder - the Starter Kit you're currently running - to the `kits` folder where the files for the different starter kits live.
+- `pageContent` is a core Markdown field, because `craftcms/ckeditor` has no Craft 6 release yet.
+- The `cloud` filesystem is a local Laravel disk in `config/filesystems.php`, because `craftcms/cloud` has no Craft 6 release yet.

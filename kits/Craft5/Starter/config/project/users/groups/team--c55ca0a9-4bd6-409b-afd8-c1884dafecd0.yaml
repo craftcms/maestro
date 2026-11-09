@@ -1,0 +1,14 @@
+description: null
+handle: team
+name: Team
+permissions:
+  - 'createentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'deleteentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'deletepeerentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'deletepeerentrydrafts:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'saveentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'savepeerentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'savepeerentrydrafts:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'viewentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'viewpeerentries:2cd4ded1-5a04-4684-b14d-95f553f61818'
+  - 'viewpeerentrydrafts:2cd4ded1-5a04-4684-b14d-95f553f61818'

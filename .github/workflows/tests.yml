@@ -10,224 +10,108 @@ permissions:
   contents: read
 
 jobs:
-  tests:
-    name: ${{ matrix.name }} (PHP ${{ matrix.php }})
+  orchestrator:
+    name: Orchestrator
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['8.3', '8.4', '8.5']
-        name:
-          - Livewire Kit (Blank)
-          - Livewire Kit
-          - Livewire Kit (Components)
-          - Livewire Kit (WorkOS)
-          - Livewire Kit (Teams)
-          - Livewire Kit (WorkOS Teams)
-          - React Kit (Blank)
-          - React Kit
-          - React Kit (WorkOS)
-          - React Kit (Teams)
-          - React Kit (WorkOS Teams)
-          - Svelte Kit (Blank)
-          - Svelte Kit
-          - Svelte Kit (WorkOS)
-          - Svelte Kit (Teams)
-          - Svelte Kit (WorkOS Teams)
-          - Vue Kit (Blank)
-          - Vue Kit
-          - Vue Kit (WorkOS)
-          - Vue Kit (Teams)
-          - Vue Kit (WorkOS Teams)
-        include:
-          # Livewire variants
-          - name: Livewire Kit (Blank)
-            kit: Livewire
-            build_flags: '--blank'
-            path: blank-livewire-starter-kit
-            node: false
-
-          - name: Livewire Kit
-            kit: Livewire
-            build_flags: ''
-            path: livewire-starter-kit
-            node: false
-
-          - name: Livewire Kit (Components)
-            kit: Livewire
-            build_flags: '--components'
-            path: livewire-starter-kit-components
-            node: false
-
-          - name: Livewire Kit (WorkOS)
-            kit: Livewire
-            build_flags: '--workos'
-            path: livewire-starter-kit-workos
-            node: false
-
-          - name: Livewire Kit (Teams)
-            kit: Livewire
-            build_flags: '--teams'
-            path: livewire-starter-kit-teams
-            node: false
-
-          - name: Livewire Kit (WorkOS Teams)
-            kit: Livewire
-            build_flags: '--teams --workos'
-            path: livewire-starter-kit-workos-teams
-            node: false
-
-          # React variants
-          - name: React Kit (Blank)
-            kit: React
-            build_flags: '--blank'
-            path: blank-react-starter-kit
-            node: true
-
-          - name: React Kit
-            kit: React
-            build_flags: ''
-            path: react-starter-kit
-            node: true
-
-          - name: React Kit (WorkOS)
-            kit: React
-            build_flags: '--workos'
-            path: react-starter-kit-workos
-            node: true
-
-          - name: React Kit (Teams)
-            kit: React
-            build_flags: '--teams'
-            path: react-starter-kit-teams
-            node: true
-
-          - name: React Kit (WorkOS Teams)
-            kit: React
-            build_flags: '--teams --workos'
-            path: react-starter-kit-workos-teams
-            node: true
-
-          # Svelte variants
-          - name: Svelte Kit (Blank)
-            kit: Svelte
-            build_flags: '--blank'
-            path: blank-svelte-starter-kit
-            node: true
-
-          - name: Svelte Kit
-            kit: Svelte
-            build_flags: ''
-            path: svelte-starter-kit
-            node: true
-
-          - name: Svelte Kit (WorkOS)
-            kit: Svelte
-            build_flags: '--workos'
-            path: svelte-starter-kit-workos
-            node: true
-
-          - name: Svelte Kit (Teams)
-            kit: Svelte
-            build_flags: '--teams'
-            path: svelte-starter-kit-teams
-            node: true
-
-          - name: Svelte Kit (WorkOS Teams)
-            kit: Svelte
-            build_flags: '--teams --workos'
-            path: svelte-starter-kit-workos-teams
-            node: true
-
-          # Vue variants
-          - name: Vue Kit (Blank)
-            kit: Vue
-            build_flags: '--blank'
-            path: blank-vue-starter-kit
-            node: true
-
-          - name: Vue Kit
-            kit: Vue
-            build_flags: ''
-            path: vue-starter-kit
-            node: true
-
-          - name: Vue Kit (WorkOS)
-            kit: Vue
-            build_flags: '--workos'
-            path: vue-starter-kit-workos
-            node: true
-
-          - name: Vue Kit (Teams)
-            kit: Vue
-            build_flags: '--teams'
-            path: vue-starter-kit-teams
-            node: true
-
-          - name: Vue Kit (WorkOS Teams)
-            kit: Vue
-            build_flags: '--workos --teams'
-            path: vue-starter-kit-workos-teams
-            node: true
-
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - name: Checkout Maestro
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@v5
 
-      - name: Setup PHP for Orchestrator
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
           coverage: none
-
-      - name: Setup Node.js
-        if: matrix.node
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: '22'
-
-      - name: Configure Composer Auth
-        env:
-          CHISEL_TOKEN: ${{ secrets.CHISEL_TOKEN }}
-        run: |
-          if [ -n "$CHISEL_TOKEN" ]; then
-            composer config --global github-oauth.github.com "$CHISEL_TOKEN"
-          fi
 
       - name: Install Composer Dependencies
         working-directory: orchestrator
         run: composer install --no-interaction --prefer-dist
 
-      - name: Build ${{ matrix.name }}
+      - name: Run Tests
         working-directory: orchestrator
-        run: php artisan build --kit=${{ matrix.kit }} ${{ matrix.build_flags }}
+        run: php artisan test
 
-      - name: Rename Build
-        run: mv build ${{ matrix.path }}
+      - name: Kit Matrix
+        id: matrix
+        working-directory: orchestrator
+        run: echo "matrix=$(php artisan kits:matrix)" >> "$GITHUB_OUTPUT"
 
-      - name: Setup PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+  kits:
+    name: ${{ matrix.name }}
+    needs: orchestrator
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.orchestrator.outputs.matrix) }}
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: craft
+          POSTGRES_PASSWORD: craft
+          POSTGRES_DB: craft
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          php-version: ${{ matrix.craft == 6 && '8.5' || '8.4' }}
+          extensions: pdo_pgsql, intl, gd, zip, bcmath
           coverage: none
 
-      - name: Configure Build Composer Auth
-        env:
-          CHISEL_TOKEN: ${{ secrets.CHISEL_TOKEN }}
+      - name: Build ${{ matrix.name }}
+        working-directory: orchestrator
         run: |
-          if [ -n "$CHISEL_TOKEN" ]; then
-            composer config --global github-oauth.github.com "$CHISEL_TOKEN"
+          composer install --no-interaction --prefer-dist
+          php artisan build ${{ matrix.kit }}
+
+      - name: Install Composer Dependencies
+        working-directory: build
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Craft
+        working-directory: build
+        run: |
+          # Write settings into .env: PHP's built-in server doesn't pass the process environment on.
+          set_env() { grep -q "^$1=" .env && sed -i "s|^$1=.*|$1=$2|" .env || echo "$1=$2" >> .env; }
+
+          if [ "${{ matrix.craft }}" = 5 ]; then
+            cp .env.example.dev .env
+            set_env CRAFT_DB_DRIVER pgsql
+            set_env CRAFT_DB_SERVER 127.0.0.1
+            set_env CRAFT_DB_PORT 5432
+            set_env CRAFT_DB_DATABASE craft
+            set_env CRAFT_DB_USER craft
+            set_env CRAFT_DB_PASSWORD craft
+            set_env CRAFT_SECURITY_KEY ci
+            set_env PRIMARY_SITE_URL http://127.0.0.1:8000
+            php craft install --interactive=0 --username=admin --email=admin@example.com --password=password
+            php -S 127.0.0.1:8000 -t web web/index.php &
+          else
+            cp .env.example .env
+            set_env DB_CONNECTION pgsql
+            set_env DB_HOST 127.0.0.1
+            set_env DB_PORT 5432
+            set_env DB_DATABASE craft
+            set_env DB_USERNAME craft
+            set_env DB_PASSWORD craft
+            set_env APP_URL http://127.0.0.1:8000
+            php artisan key:generate
+            php artisan craft:install --no-interaction --username=admin --email=admin@example.com --password=password
+            php artisan serve --port=8000 &
           fi
 
-      - name: Setup Kit
-        working-directory: ${{ matrix.path }}
-        run: composer setup
+          # Installing must not rewrite the kit's project config, which happens when
+          # its schema version no longer matches the Craft version in composer.json.
+          git diff --exit-code -- config/project config/craft/project
 
-      - name: Run CI Checks
-        working-directory: ${{ matrix.path }}
-        run: composer ci:check
+      - name: Smoke Test
+        run: |
+          sleep 3
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8000/

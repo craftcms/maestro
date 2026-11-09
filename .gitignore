@@ -1,12 +1,4 @@
 .idea/
 .amp/portals/*
+.amp/in/
 build/
-browser_tests/tests/Browser/Screenshots/
-
-# Skeleton sync
-.sync-pr-body.md
-
-# Generated files
-**/resources/js/actions/
-**/resources/js/routes/
-**/resources/js/wayfinder/

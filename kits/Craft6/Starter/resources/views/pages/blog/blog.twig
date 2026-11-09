@@ -1,0 +1,21 @@
+{% extends "pages/default" %}
+{% import '_utilities/teaser' as article %}
+{% set postQuery = craft.entries.section('blogPosts').limit(4) %}
+{% paginate postQuery as pageInfo, posts %}
+
+{% block title %}
+  {% if pageInfo.getPrevUrl() or pageInfo.getNextUrl() %}
+  , Page {{ pageInfo.currentPage }} of {{ pageInfo.totalPages }}
+  {% endif %}
+{% endblock %}
+
+{% block landing %}
+  <section class="container mx-auto mb-6 px-2 divide-y divide-slate-300">
+    <div class="sm:grid sm:grid-cols-2 sm:gap-6">
+      {% for post in posts %}
+        {{ article.teaser({post: post, featured: true}) }}
+      {% endfor %}
+    </div>
+    {% include '_partials/pagination' with { pageInfo: pageInfo } %}
+  </section>
+{% endblock %}

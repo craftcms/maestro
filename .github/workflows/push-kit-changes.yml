@@ -4,311 +4,83 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
-  build:
-    name: Build ${{ matrix.name }}
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - id: matrix
+        working-directory: orchestrator
+        run: |
+          composer install --no-interaction --prefer-dist
+          echo "matrix=$(php artisan kits:matrix)" >> "$GITHUB_OUTPUT"
+
+  push:
+    name: Push ${{ matrix.name }}
+    needs: matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # Livewire variants
-          - name: Livewire Kit (Blank)
-            kit: Livewire
-            build_flags: '--blank'
-            repository: laravel/blank-livewire-starter-kit
-            path: blank-livewire-starter-kit
-            branch: main
-            node: false
-
-          - name: Livewire Kit
-            kit: Livewire
-            build_flags: ''
-            repository: laravel/livewire-starter-kit
-            path: livewire-starter-kit
-            branch: main
-            node: false
-
-          - name: Livewire Kit (Components)
-            kit: Livewire
-            build_flags: '--components'
-            repository: laravel/livewire-starter-kit
-            path: livewire-starter-kit-components
-            branch: components
-            node: false
-
-          - name: Livewire Kit (WorkOS)
-            kit: Livewire
-            build_flags: '--workos'
-            repository: laravel/livewire-starter-kit
-            path: livewire-starter-kit-workos
-            branch: workos
-            node: false
-
-          - name: Livewire Kit (Teams)
-            kit: Livewire
-            build_flags: '--teams'
-            repository: laravel/livewire-starter-kit
-            path: livewire-starter-kit-teams
-            branch: teams
-            node: false
-
-          - name: Livewire Kit (WorkOS Teams)
-            kit: Livewire
-            build_flags: '--teams --workos'
-            repository: laravel/livewire-starter-kit
-            path: livewire-starter-kit-workos-teams
-            branch: workos-teams
-            node: false
-
-          # React variants
-          - name: React Kit (Blank)
-            kit: React
-            build_flags: '--blank'
-            repository: laravel/blank-react-starter-kit
-            path: blank-react-starter-kit
-            branch: main
-            node: true
-
-          - name: React Kit
-            kit: React
-            build_flags: ''
-            repository: laravel/react-starter-kit
-            path: react-starter-kit
-            branch: main
-            node: true
-
-          - name: React Kit (WorkOS)
-            kit: React
-            build_flags: '--workos'
-            repository: laravel/react-starter-kit
-            path: react-starter-kit-workos
-            branch: workos
-            node: true
-
-          - name: React Kit (Teams)
-            kit: React
-            build_flags: '--teams'
-            repository: laravel/react-starter-kit
-            path: react-starter-kit-teams
-            branch: teams
-            node: true
-
-          - name: React Kit (WorkOS Teams)
-            kit: React
-            build_flags: '--teams --workos'
-            repository: laravel/react-starter-kit
-            path: react-starter-kit-workos-teams
-            branch: workos-teams
-            node: true
-
-          # Svelte variants
-          - name: Svelte Kit (Blank)
-            kit: Svelte
-            build_flags: '--blank'
-            repository: laravel/blank-svelte-starter-kit
-            path: blank-svelte-starter-kit
-            branch: main
-            node: true
-
-          - name: Svelte Kit
-            kit: Svelte
-            build_flags: ''
-            repository: laravel/svelte-starter-kit
-            path: svelte-starter-kit
-            branch: main
-            node: true
-
-          - name: Svelte Kit (WorkOS)
-            kit: Svelte
-            build_flags: '--workos'
-            repository: laravel/svelte-starter-kit
-            path: svelte-starter-kit-workos
-            branch: workos
-            node: true
-
-          - name: Svelte Kit (Teams)
-            kit: Svelte
-            build_flags: '--teams'
-            repository: laravel/svelte-starter-kit
-            path: svelte-starter-kit-teams
-            branch: teams
-            node: true
-
-          - name: Svelte Kit (WorkOS Teams)
-            kit: Svelte
-            build_flags: '--teams --workos'
-            repository: laravel/svelte-starter-kit
-            path: svelte-starter-kit-workos-teams
-            branch: workos-teams
-            node: true
-
-          # Vue variants
-          - name: Vue Kit (Blank)
-            kit: Vue
-            build_flags: '--blank'
-            repository: laravel/blank-vue-starter-kit
-            path: blank-vue-starter-kit
-            branch: main
-            node: true
-
-          - name: Vue Kit
-            kit: Vue
-            build_flags: ''
-            repository: laravel/vue-starter-kit
-            path: vue-starter-kit
-            branch: main
-            node: true
-
-          - name: Vue Kit (WorkOS)
-            kit: Vue
-            build_flags: '--workos'
-            repository: laravel/vue-starter-kit
-            path: vue-starter-kit-workos
-            branch: workos
-            node: true
-
-          - name: Vue Kit (Teams)
-            kit: Vue
-            build_flags: '--teams'
-            repository: laravel/vue-starter-kit
-            path: vue-starter-kit-teams
-            branch: teams
-            node: true
-
-          - name: Vue Kit (WorkOS Teams)
-            kit: Vue
-            build_flags: '--workos --teams'
-            repository: laravel/vue-starter-kit
-            path: vue-starter-kit-workos-teams
-            branch: workos-teams
-            node: true
+        include: ${{ fromJSON(needs.matrix.outputs.matrix) }}
 
     steps:
-      - name: Checkout Maestro
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v5
         with:
+          path: maestro
           persist-credentials: false
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, xml, ctype, json, curl
-
-      - name: Setup Node.js
-        if: matrix.node
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: '22'
-
-      - name: Configure Composer Auth
-        env:
-          CHISEL_TOKEN: ${{ secrets.CHISEL_TOKEN }}
-        run: |
-          if [ -n "$CHISEL_TOKEN" ]; then
-            composer config --global github-oauth.github.com "$CHISEL_TOKEN"
-          fi
-
-      - name: Install Composer Dependencies
-        working-directory: orchestrator
-        run: composer install --no-interaction --prefer-dist
+          coverage: none
 
       - name: Build ${{ matrix.name }}
-        working-directory: orchestrator
-        run: php artisan build --kit=${{ matrix.kit }} ${{ matrix.build_flags }} --chisel
+        working-directory: maestro/orchestrator
+        run: |
+          composer install --no-interaction --prefer-dist
+          php artisan build ${{ matrix.kit }}
 
-      - name: Checkout Starter Kit
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout ${{ matrix.repository }}
+        uses: actions/checkout@v5
         with:
           repository: ${{ matrix.repository }}
-          ref: ${{ matrix.branch }}
-          path: ${{ matrix.path }}
+          path: kit
+          fetch-depth: 0
           token: ${{ secrets.STARTER_KIT_TOKEN }}
 
-      - name: Copy Build to Starter Kit
-        working-directory: ${{ matrix.path }}
+      - name: Copy Build to Kit
+        working-directory: kit
         run: |
-          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          cp -r ../build/* .
-          cp -r ../build/.[!.]* . 2>/dev/null || true
+          # The first push to a new branch (e.g. 6.x) starts it from the default branch.
+          git checkout ${{ matrix.branch }} 2>/dev/null || git checkout -b ${{ matrix.branch }}
+          rsync -a --delete --exclude .git ../maestro/build/ .
 
-      - name: Remove Lock Files
-        working-directory: ${{ matrix.path }}
-        run: rm -f composer.lock package-lock.json
-
-      - name: Discard Permission-Only Changes
-        working-directory: ${{ matrix.path }}
-        run: |
-          FILES=$(git diff --diff-filter=M --name-only)
-          if [[ -n "$FILES" ]]; then
-            while IFS= read -r file; do
-              if git diff "$file" | grep -q '^diff --git' && \
-                 ! git diff "$file" | grep -qE '^(\+([^+]|$)|-([^-]|$))'; then
-                git checkout -- "$file"
-              fi
-            done <<< "$FILES"
-          fi
-
-      - name: Check for Changes
-        id: changes
-        working-directory: ${{ matrix.path }}
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No changes detected, skipping push."
-          fi
-
-      - name: Get Merged PR Information
-        if: steps.changes.outputs.has_changes == 'true'
-        id: pr-info
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-        with:
-          script: |
-            const script = require('./.github/scripts/get-merged-pr-info.js');
-            await script({ github, context, core });
-
-      - name: Commit and Push Changes
-        if: steps.changes.outputs.has_changes == 'true'
-        working-directory: ${{ matrix.path }}
+      - name: Commit and Push
+        working-directory: kit
         env:
-          COMMIT_MSG: ${{ steps.pr-info.outputs.title }}
-          PR_FOUND: ${{ steps.pr-info.outputs.found }}
-          PR_AUTHOR: ${{ steps.pr-info.outputs.author }}
-          PR_AUTHOR_EMAIL: ${{ steps.pr-info.outputs.author_email }}
-          CO_AUTHORS: ${{ steps.pr-info.outputs.co_authors }}
+          MESSAGE: ${{ github.event.head_commit.message }}
         run: |
+          # --force: kits commit some files their .gitignore excludes, like the starter logo.
+          git add -A --force
+          if git diff --cached --quiet; then
+            echo "No changes for ${{ matrix.name }}."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add -A
-
-          TRAILERS=""
-
-          if [[ "$PR_FOUND" == "true" ]]; then
-            TRAILERS="Co-authored-by: $PR_AUTHOR <$PR_AUTHOR_EMAIL>"
-          fi
-
-          if [[ -n "$CO_AUTHORS" ]]; then
-            if [[ -n "$TRAILERS" ]]; then
-              TRAILERS="$TRAILERS
-          $CO_AUTHORS"
-            else
-              TRAILERS="$CO_AUTHORS"
-            fi
-          fi
-
-          if [[ -n "$TRAILERS" ]]; then
-            git commit -m "$COMMIT_MSG" -m "$TRAILERS"
-          else
-            git commit -m "$COMMIT_MSG"
-          fi
-
+          git commit -m "${MESSAGE:-Update from Maestro}" -m "Built by craftcms/maestro@${{ github.sha }}"
           git push origin ${{ matrix.branch }}

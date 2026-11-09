@@ -1,0 +1,36 @@
+name: Sync Craft Skeleton
+
+on:
+  schedule:
+    - cron: '0 9 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Sync Skeleton Layers
+        working-directory: orchestrator
+        run: |
+          composer install --no-interaction --prefer-dist
+          php artisan skeleton:sync
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/sync-craft-skeleton
+          title: Sync craftcms/craft skeleton changes
+          commit-message: Sync craftcms/craft skeleton changes
+          body: Mirrors the `craftcms/craft` branches listed under `skeletons` in `kits.json`. The Tests workflow builds and installs every kit on top of them.
+          add-paths: kits

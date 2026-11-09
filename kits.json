@@ -1,0 +1,28 @@
+{
+    "skeletons": {
+        "Craft5/Blank": {
+            "repository": "craftcms/craft",
+            "ref": "5.x"
+        },
+        "Craft6/Blank": {
+            "repository": "craftcms/craft",
+            "ref": "6.x"
+        }
+    },
+    "kits": {
+        "twig": {
+            "name": "Twig (Craft 5)",
+            "craft": 5,
+            "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/Twig"],
+            "repository": "craftcms/starter-twig",
+            "branch": "5.x"
+        },
+        "twig-6": {
+            "name": "Twig (Craft 6)",
+            "craft": 6,
+            "layers": ["Craft6/Blank", "Craft6/Starter", "Craft6/Twig"],
+            "repository": "craftcms/starter-twig",
+            "branch": "6.x"
+        }
+    }
+}

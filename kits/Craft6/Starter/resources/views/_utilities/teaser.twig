@@ -1,0 +1,22 @@
+{% macro teaser(data) %}
+{% set featured = data.featured ?? false %}
+  <article class="py-6">
+    {% if featured %}
+      {% set hero = data.post.image.eagerly().one() %}
+      <figure class="image-block my-4">
+        <a href="{{ data.post.url }}">
+          {% if hero %}
+            <img src="{{ hero.url('hero') }}" alt="{{ hero.alt }}" />
+          {% else %}
+            <div class="bg-slate-200 hover:bg-slate-300 aspect-video"></div>
+          {% endif %}
+        </a>
+      </figure>
+    {% endif %}
+    <h2 class="text-4xl font-bold"><a href="{{ data.post.url }}" class="text-red-600 hover:undeline focus:underline cursor-pointer">{{ data.post.title }}</a></h2>
+    <p>{{ data.post.pageSubheading }}</p>
+    <p>
+      <time class="text-sm" datetime="{{ data.post.postDate|atom }}">{{ data.post.postDate|date }}</time>
+    </p>
+  </article>
+{% endmacro %}

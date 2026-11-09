@@ -1,10 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directories:
-      - "/"
-      - "/kits/Inertia/Blank/Base/.github/workflows"
-      - "/kits/Livewire/Blank/.github/workflows"
+    directory: "/"
     schedule:
       interval: "weekly"
     cooldown:

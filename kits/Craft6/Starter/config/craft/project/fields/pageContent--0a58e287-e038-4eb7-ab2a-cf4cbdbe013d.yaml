@@ -1,0 +1,14 @@
+columnSuffix: null
+handle: pageContent
+instructions: null
+name: 'Page content'
+searchable: true
+settings:
+  availableVolumes:
+    - 7b9364bd-2215-495a-8b0b-2280df887a8b # Media
+  flavor: gfm
+  sanitizeHtml: true
+  showToolbar: true
+translationKeyFormat: null
+translationMethod: none
+type: CraftCms\Cms\Field\Markdown
