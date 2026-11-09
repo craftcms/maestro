@@ -28,6 +28,8 @@ return GeneralConfig::create()
     // Set the @webroot alias so the clear-caches command knows where to find CP resources
     ->aliases([
         '@webroot' => dirname(__DIR__) . '/web',
+        // Lets Yii find console controllers in modules/, so `craft help` can list them
+        '@modules' => dirname(__DIR__) . '/modules',
         '@preview' => App::env('PRIMARY_SITE_URL'),
     ])
     // Serve only the control panel and the GraphQL API; the front end renders pages
