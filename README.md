@@ -50,6 +50,16 @@ A layer can be copied into a subfolder instead of the build root, the way headle
 ]
 ```
 
+### .env files
+
+`.env` files (`.env.example`, `.env.example.dev`, and so on) merge across layers instead of overriding. The first layer that has one provides the whole file, usually the skeleton. Later layers hold only the keys they change or add:
+
+- A key the file already has is replaced where it stands. Comment lines directly above the key replace its comments; without any, its comments stay.
+- A new key is appended at the end, with the comment lines directly above it. Keys separated by a blank line stay separate groups.
+- A comment block at the top of the layer's file, followed by a blank line, is added to the top of the merged file.
+
+For example, `Craft6/Nuxt/backend/.env.example` is one line, `APP_NAME="Nuxt Starter"`, and the rest comes from the skeleton and `Craft6/Headless`. A skeleton update then reaches every kit without touching their `.env` files.
+
 Headless kits share one Craft backend, so its project config can't name the site after one front end. The site and system name are `$CRAFT_SITE_NAME` on Craft 5 and `$APP_NAME` on Craft 6, which each kit sets in its `backend/.env.example.dev` or `backend/.env.example`.
 
 ## Working on a kit
@@ -68,6 +78,7 @@ php artisan sync           # copy your edits back into kits/
 - A changed or deleted file goes to the most specific layer that has it.
 - A new file goes to the most specific layer that already has its directory, or to `--layer=`.
 - Skeleton layers are never written; changing a skeleton file creates an override in a layer above it.
+- A merged `.env` file syncs key by key. A changed key goes to the most specific layer that sets it, or to the layer that owns the file if only the skeleton sets it. A new key goes to the layer that owns the file. A deleted key is removed from every layer that sets it; a key only the skeleton sets comes back on the next build. Moved keys and comments that aren't directly above a key can't be synced, so `sync` warns about them.
 
 Review `git status` before committing. Files Craft generates during install, such as `config/license.key`, will show up too.
 

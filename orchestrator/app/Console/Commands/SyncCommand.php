@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\EnvFile;
 use App\Maestro;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -103,6 +104,15 @@ class SyncCommand extends Command
                 continue;
             }
 
+            $sources = $this->sources($maestro, $path, $mounts);
+
+            // A merged .env file syncs key by key, unless one editable layer owns all of it.
+            if (EnvFile::matches($path) && (count($sources) > 1 || ($sources !== [] && $maestro->isSkeleton($sources[0][0])))) {
+                $this->syncEnvFile($maestro, $path, $mounts, $editable, [$layer, $target]);
+
+                continue;
+            }
+
             File::ensureDirectoryExists(dirname($target));
             Process::run(['cp', '-p', "{$build}/{$path}", $target])->throw();
             info("Synced {$path} to {$layer}");
@@ -111,5 +121,89 @@ class SyncCommand extends Command
         BuildCommand::commitBuild($build, 'Sync');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Each layer that has the path, with the path inside it, in build order.
+     *
+     * @return list<array{string, string}>
+     */
+    protected function sources(Maestro $maestro, string $path, array $mounts): array
+    {
+        $sources = [];
+
+        foreach ($mounts as $mount) {
+            $source = $maestro->layerPath($mount, $path);
+
+            if ($source !== null && File::exists($source)) {
+                $sources[] = [$mount['layer'], $source];
+            }
+        }
+
+        return $sources;
+    }
+
+    /**
+     * Sync a merged .env file key by key. A changed key goes to the most specific
+     * editable layer that sets it, a new one to the layer that owns the file, and
+     * a deleted one is removed from every editable layer that sets it.
+     *
+     * @param  array{string, string}  $fallback  Layer and path for keys no editable layer sets
+     */
+    protected function syncEnvFile(Maestro $maestro, string $path, array $mounts, array $editable, array $fallback): void
+    {
+        $built = File::get("{$maestro->buildPath()}/{$path}");
+        $merge = fn () => EnvFile::merge(array_map(fn (array $source) => File::get($source[1]), $this->sources($maestro, $path, $mounts)));
+        $sets = fn (array $source, string $key) => isset(EnvFile::parse(File::get($source[1]))[1][$key]);
+
+        [, $after] = EnvFile::parse($built);
+        [, $before] = EnvFile::parse($merge());
+        $writes = [];
+
+        foreach ($after as $key => $entry) {
+            $was = $before[$key] ?? null;
+
+            if ($was !== null && $was['line'] === $entry['line'] && $was['comments'] === $entry['comments']) {
+                continue;
+            }
+
+            // Unchanged comments stay where they are; only the value moves.
+            if ($was !== null && $was['comments'] === $entry['comments']) {
+                $entry['comments'] = [];
+            }
+
+            [$layer, $target] = collect($this->sources($maestro, $path, $editable))->last(fn (array $source) => $sets($source, $key)) ?? $fallback;
+            $writes[$target] ??= ['layer' => $layer, 'keys' => [], 'entries' => []];
+            $writes[$target]['keys'][] = $key;
+            $writes[$target]['entries'][] = $entry;
+        }
+
+        foreach ($writes as $target => $write) {
+            File::ensureDirectoryExists(dirname($target));
+            File::put($target, EnvFile::merge([File::exists($target) ? File::get($target) : '', EnvFile::render($write['entries'])]));
+            info("Synced {$path} keys ".implode(', ', $write['keys'])." to {$write['layer']}");
+        }
+
+        foreach (array_keys(array_diff_key($before, $after)) as $key) {
+            foreach ($this->sources($maestro, $path, $mounts) as [$layer, $source]) {
+                if (! $sets([$layer, $source], $key)) {
+                    continue;
+                }
+
+                if ($maestro->isSkeleton($layer)) {
+                    warning("{$key} in {$path} still comes from {$layer} and will return on the next build.");
+
+                    continue;
+                }
+
+                $remaining = EnvFile::remove(File::get($source), $key);
+                $remaining === '' ? File::delete($source) : File::put($source, $remaining);
+                info("Removed {$key} from {$path} in {$layer}");
+            }
+        }
+
+        if ($merge() !== $built) {
+            warning("{$path} has order or comment changes that sync can't place in a layer. Run build to see the merged file.");
+        }
     }
 }

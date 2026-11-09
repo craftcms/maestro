@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\EnvFile;
 use App\Maestro;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -37,6 +38,13 @@ class BuildCommand extends Command
             Process::run(['cp', '-a', $maestro->kitsPath($mount['layer']).'/.', $target])->throw();
         }
 
+        // .env files merge instead of overriding: see EnvFile.
+        foreach (self::envFiles($maestro, $handle) as $path => $sources) {
+            if (count($sources) > 1) {
+                File::put("{$build}/{$path}", EnvFile::merge(array_map(File::get(...), $sources)));
+            }
+        }
+
         // Snapshot the build in its own Git repository, so `sync` can find
         // what changed and the kit's .gitignore files decide what counts.
         Process::path($build)->run('git init -q')->throw();
@@ -46,6 +54,26 @@ class BuildCommand extends Command
         info("{$kit['name']} built in {$build}");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Every .env file in the kit's layers, by build path, with each layer's copy in build order.
+     *
+     * @return array<string, list<string>>
+     */
+    protected static function envFiles(Maestro $maestro, string $handle): array
+    {
+        $files = [];
+
+        foreach ($maestro->layers($handle) as $mount) {
+            foreach (File::allFiles($maestro->kitsPath($mount['layer']), true) as $file) {
+                if (EnvFile::matches($file->getFilename())) {
+                    $files[ltrim("{$mount['into']}/{$file->getRelativePathname()}", '/')][] = $file->getPathname();
+                }
+            }
+        }
+
+        return $files;
     }
 
     public static function commitBuild(string $build, string $message): void

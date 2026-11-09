@@ -17,6 +17,33 @@ beforeEach(function () {
         'Base/Kit/composer.json' => 'kit',
         'Base/Headless/config/general.php' => 'headless',
         'Base/Frontend/frontend/package.json' => 'frontend',
+        'Base/Blank/.env.example' => <<<'ENV'
+            # Header from the skeleton
+
+            # App name
+            APP_NAME=Craft
+            APP_DEBUG=true
+
+            DB_HOST=127.0.0.1
+            DB_PORT=5432
+
+            ENV,
+        'Base/Starter/.env.example' => <<<'ENV'
+            # The starter's name
+            APP_NAME=Starter
+
+            # Mail
+            MAIL_HOST=mail
+            MAIL_PORT=25
+
+            ENV,
+        'Base/Kit/.env.example' => <<<'ENV'
+            # Only for the demo kit
+
+            APP_NAME=Demo
+            DB_PORT=3306
+
+            ENV,
     ];
 
     foreach ($files as $path => $contents) {
@@ -109,4 +136,78 @@ test('layers mounted into a subfolder build there and sync back to the same laye
         ->and(File::get("{$kits}/Base/Headless/modules/Module.php"))->toBe('new')
         ->and(File::get("{$kits}/Base/Frontend/frontend/app.vue"))->toBe('new')
         ->and(File::exists("{$kits}/Base/Frontend/backend"))->toBeFalse();
+});
+
+test('build merges .env files across layers', function () {
+    $this->artisan('build', ['kit' => 'demo'])->assertSuccessful();
+
+    expect(File::get("{$this->root}/build/.env.example"))->toBe(<<<'ENV'
+        # Only for the demo kit
+
+        # Header from the skeleton
+
+        # The starter's name
+        APP_NAME=Demo
+        APP_DEBUG=true
+
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+
+        # Mail
+        MAIL_HOST=mail
+        MAIL_PORT=25
+
+        ENV);
+});
+
+test('sync writes .env changes key by key to the layers that set them', function () {
+    $this->artisan('build', ['kit' => 'demo'])->assertSuccessful();
+
+    $env = "{$this->root}/build/.env.example";
+    $kits = "{$this->root}/kits";
+    $edited = str_replace(
+        ['APP_DEBUG=true', "MAIL_HOST=mail\n", 'MAIL_PORT=25'],     // skeleton key, Starter key, Starter key
+        ['APP_DEBUG=false', '', 'MAIL_PORT=587'],
+        File::get($env),
+    )."\n# Queue\nQUEUE_CONNECTION=sync\n";                        // new key
+    File::put($env, $edited);
+
+    $this->artisan('sync')->assertSuccessful();
+
+    expect(File::get("{$kits}/Base/Kit/.env.example"))->toBe(<<<'ENV'
+        # Only for the demo kit
+
+        APP_NAME=Demo
+        DB_PORT=3306
+
+        APP_DEBUG=false
+
+        # Queue
+        QUEUE_CONNECTION=sync
+
+        ENV)
+        ->and(File::get("{$kits}/Base/Starter/.env.example"))->toBe(<<<'ENV'
+        # The starter's name
+        APP_NAME=Starter
+
+        # Mail
+        MAIL_PORT=587
+
+        ENV);
+
+    // The layers now build the edited file.
+    $this->artisan('build', ['kit' => 'demo'])->assertSuccessful();
+    expect(File::get($env))->toBe($edited);
+
+    // A key deleted from the skeleton's file can't be removed, so nothing changes.
+    File::put($env, str_replace("DB_HOST=127.0.0.1\n", '', $edited));
+    $this->artisan('sync')->assertSuccessful();
+    expect(File::get("{$kits}/Base/Blank/.env.example"))->toContain('DB_HOST=127.0.0.1')
+        ->and(File::get("{$kits}/Base/Kit/.env.example"))->not->toContain('DB_HOST');
+
+    // A file only the skeleton has gets an override holding just the changed key.
+    $this->artisan('build', ['kit' => 'headless'])->assertSuccessful();
+    File::put("{$this->root}/build/backend/.env.example", str_replace('DB_PORT=5432', 'DB_PORT=3306', File::get("{$kits}/Base/Blank/.env.example")));
+    $this->artisan('sync')->assertSuccessful();
+    expect(File::get("{$kits}/Base/Headless/.env.example"))->toBe("DB_PORT=3306\n");
 });
