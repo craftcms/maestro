@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+amp orb services ensure
+pg_isready -h 127.0.0.1 -p 5432 -U craft -d craft

@@ -120,6 +120,16 @@ Kits ship `composer.lock` but not `package-lock.json`, which `build` keeps out o
 
 Review `git status` before committing. Files Craft generates during install, such as `config/license.key`, will show up too.
 
+### Amp orbs
+
+`.agents/setup` installs PHP 8.5 with the extensions needed by both Craft versions, Composer 2, Node 24 matching Europa's `.nvmrc`, and PostgreSQL 17. It installs the orchestrator's locked dependencies and downloads the four sets of locked kit dependencies into Composer's shared cache. Repeated runs preserve `orchestrator/.env` and existing database data, and skip installed system packages.
+
+`.agents/resume` starts PostgreSQL through `.amp/services.yaml`. It listens only on the orb's loopback interface at port 5432, with username and password `craft`. The `craft` database is for kit development; `craft_update` is disposable scratch space for `craft:update`. Database durability is disabled for speed, so don't use these databases for irreplaceable data.
+
+Build the kit you need with `php artisan build <kit>` from `orchestrator/`, then run `composer install` in its Craft root to use the cached packages. Setup does not select a kit, change `build/`, install Craft, or run migrations. Frontend dependencies remain kit-specific: run `npm install` in the built kit's frontend directory, or in `build/` for Europa. DDEV and Docker aren't needed for this native orb environment.
+
+Amp snapshots successful setup runs and reruns setup when the snapshot is stale. Changes to these files take effect for future orbs once they reach the project's base branch.
+
 ### Updating Craft
 
 The kits of each Craft version share one `composer.lock` in `Craft5/Base` or `Craft6/Base`, except `wordpress-5`, whose plugins need their own in `Craft5/WordPress`. Project config YAML is tied to the Craft version that wrote it, so updating Craft means installing on the old version, then upgrading. `craft:update` does that for every kit of a Craft version, using a scratch Postgres database whose tables it drops:

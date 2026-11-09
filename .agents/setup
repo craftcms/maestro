@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+export DEBIAN_FRONTEND=noninteractive
+TIMEFORMAT='Finished in %3R seconds'
+
+echo 'Installing PHP 8.5 and PostgreSQL 17 prerequisites'
+packages=(php8.5-cli php8.5-curl php8.5-mbstring php8.5-xml php8.5-intl
+    php8.5-gd php8.5-zip php8.5-bcmath php8.5-pgsql php8.5-sqlite3
+    php8.5-mysql postgresql-17 postgresql-client-17)
+missing=()
+for package in "${packages[@]}"; do
+    if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -qx 'install ok installed'; then
+        missing+=("$package")
+    fi
+done
+if ((${#missing[@]})); then
+    . /etc/os-release
+    curl -fsSL https://packages.sury.org/php/apt.gpg | sudo tee /usr/share/keyrings/sury-php.gpg >/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ $VERSION_CODENAME main" |
+        sudo tee /etc/apt/sources.list.d/sury-php.list >/dev/null
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc |
+        sudo tee /usr/share/keyrings/postgresql.asc >/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/postgresql.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main" |
+        sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+    # Use an orb-supervised, user-owned cluster instead of a system daemon.
+    sudo mkdir -p /etc/postgresql-common
+    if ! grep -qx 'create_main_cluster = false' /etc/postgresql-common/createcluster.conf 2>/dev/null; then
+        echo 'create_main_cluster = false' | sudo tee -a /etc/postgresql-common/createcluster.conf >/dev/null
+    fi
+    time sudo apt-get update -qq
+    time sudo --preserve-env=DEBIAN_FRONTEND apt-get install -y --no-install-recommends "${missing[@]}"
+fi
+sudo update-alternatives --set php /usr/bin/php8.5
+
+temp=$(mktemp -d)
+trap 'rm -rf "$temp"' EXIT
+
+echo 'Preparing Composer 2 and Node 24 (Europa .nvmrc)'
+if ! command -v composer >/dev/null || ! composer --version --no-ansi | grep -q '^Composer version 2\.'; then
+    curl -fsSL https://getcomposer.org/installer -o "$temp/composer-setup.php"
+    expected=$(curl -fsSL https://composer.github.io/installer.sig)
+    actual=$(sha384sum "$temp/composer-setup.php" | cut -d ' ' -f 1)
+    [[ "$actual" == "$expected" ]]
+    php "$temp/composer-setup.php" --2 --install-dir="$temp" --filename=composer
+    sudo install -m 755 "$temp/composer" /usr/local/bin/composer
+fi
+if ! command -v node >/dev/null || [[ "$(node --version)" != v24.* ]]; then
+    case "$(uname -m)" in
+        x86_64) arch=x64 ;;
+        aarch64) arch=arm64 ;;
+        *) echo 'Unsupported Node architecture' >&2; exit 1 ;;
+    esac
+    curl -fsSL https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt -o "$temp/SHASUMS256.txt"
+    archive=$(awk -v suffix="-linux-$arch.tar.xz" '$2 ~ suffix "$" {print $2}' "$temp/SHASUMS256.txt")
+    curl -fsSL "https://nodejs.org/dist/latest-v24.x/$archive" -o "$temp/$archive"
+    (cd "$temp"; grep " $archive\$" SHASUMS256.txt | sha256sum --check)
+    sudo tar -xJf "$temp/$archive" -C /usr/local --strip-components=1
+fi
+
+echo 'Installing orchestrator dependencies from composer.lock'
+[[ -f orchestrator/.env ]] || cp orchestrator/.env.example orchestrator/.env
+time composer install --working-dir=orchestrator --no-interaction --prefer-dist --no-progress
+
+echo 'Caching locked kit packages without running kit scripts or changing layers'
+for layer in Craft5/Base Craft5/WordPress Craft5/Europa Craft6/Base; do
+    mkdir -p "$temp/$layer"
+    cp "kits/$layer/composer.json" "kits/$layer/composer.lock" "$temp/$layer/"
+    time composer install --working-dir="$temp/$layer" --download-only --no-scripts --no-plugins \
+        --no-interaction --prefer-dist --no-progress
+done
+
+echo 'Initializing disposable local PostgreSQL databases'
+data="$HOME/.local/share/maestro/postgres"
+if [[ ! -f "$data/PG_VERSION" ]]; then
+    mkdir -p "$data"
+    printf 'craft\n' > "$temp/pg-password"
+    /usr/lib/postgresql/17/bin/initdb -D "$data" -U craft --pwfile="$temp/pg-password" \
+        --auth-local=trust --auth-host=scram-sha-256 --encoding=UTF8 --locale=C.UTF-8
+    # Single-user mode exits after initialization; no server is left running in setup.
+    printf 'CREATE DATABASE craft;\nCREATE DATABASE craft_update;\n' |
+        /usr/lib/postgresql/17/bin/postgres --single -D "$data" postgres
+fi
+
+echo 'Orb setup ready; .agents/resume starts PostgreSQL'
