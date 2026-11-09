@@ -104,13 +104,18 @@ Kits ship `composer.lock` but not `package-lock.json`, which `build` keeps out o
 
 Review `git status` before committing. Files Craft generates during install, such as `config/license.key`, will show up too.
 
-### Updating Craft in a kit
+### Updating Craft
 
-Project config YAML is tied to the Craft version that wrote it, so updating Craft means installing on the old version, then upgrading:
+The kits of each Craft version share one `composer.lock` in `Craft5/Starter` or `Craft6/Starter`, except `wordpress-5`, whose plugins need their own in `Craft5/WordPress`. Project config YAML is tied to the Craft version that wrote it, so updating Craft means installing on the old version, then upgrading. `craft:update` does that for every kit of a Craft version, using a scratch Postgres database whose tables it drops:
 
-1. Build the kit and `craft install` it with its current `composer.lock`.
-2. Raise the constraint in `composer.json`, run `composer update`, then `craft up`.
-3. Run `php artisan sync` to bring back the new `composer.lock` and the rewritten project config.
+```bash
+php artisan craft:update 5 --constraint=^5.13.0 --db-database=craft_update
+php artisan craft:update 6 --db-database=craft_update   # the newest alpha within ^6.0.0
+```
+
+For each lock and project config pair (`twig-5` or `twig-6` for Guestbook, `wordpress-5`, and `nuxt-5` or `astro-6` for Headless), it builds the kit, installs it on the locked version, raises the `craftcms/cms` constraint, runs `composer update` and `craft up`, and syncs the new lock and project config back. Nothing else the install writes, such as `config/license.key`, is synced. A kit whose lock an earlier run already updated still installs on the old lock first, then takes the updated one. Leave out `--constraint` to update within the current one. The database options default to `craft`/`craft` on `127.0.0.1:5432`.
+
+While Craft 6 is in alpha, nearly every alpha changes the schema version, so without the lock a fresh install would pick up a newer alpha than the project config was written with and fail.
 
 The Tests workflow fails when a kit's project config doesn't match its Craft version.
 
