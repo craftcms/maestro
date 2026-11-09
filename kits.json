@@ -30,10 +30,23 @@
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
                 { "layer": "Craft5/Headless", "into": "backend" },
+                "Shared/Nuxt",
                 "Craft5/Nuxt"
             ],
             "repository": "craftcms/starter-nuxt",
             "branch": "5.x"
+        },
+        "nuxt-6": {
+            "name": "Nuxt (Craft 6)",
+            "craft": 6,
+            "layers": [
+                { "layer": "Craft6/Blank", "into": "backend" },
+                { "layer": "Craft6/Headless", "into": "backend" },
+                "Shared/Nuxt",
+                "Craft6/Nuxt"
+            ],
+            "repository": "craftcms/starter-nuxt",
+            "branch": "6.x"
         }
     }
 }

@@ -15,18 +15,23 @@ kits/
     Starter/    what every Craft 5 starter shares: content model, templates, DDEV, Cloud
     Twig/       what only starter-twig adds
     Headless/   the Craft backend headless kits share: headless mode, GraphQL, content model
-    Nuxt/       starter-nuxt's frontend/, DDEV config, and README
+    Nuxt/       starter-nuxt's Craft 5 DDEV config and README
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/
     Twig/
+    Headless/
+    Nuxt/
+  Shared/
+    Nuxt/       starter-nuxt's frontend/, which works with either Craft version
 ```
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
 | `twig` | Craft5/Blank → Craft5/Starter → Craft5/Twig | `craftcms/starter-twig@5.x` |
 | `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Twig | `craftcms/starter-twig@6.x` |
-| `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
+| `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
+| `nuxt-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 
 Put a file in the lowest layer that every kit needing it shares. To add a kit, add its layer folder and an entry in `kits.json`.
 
@@ -83,3 +88,10 @@ While the Craft 6 ecosystem is in alpha:
 
 - `pageContent` is a core Markdown field, because `craftcms/ckeditor` has no Craft 6 release yet.
 - The `cloud` filesystem is a local Laravel disk in `config/filesystems.php`, because `craftcms/cloud` has no Craft 6 release yet.
+
+The Craft 6 headless backend replaces Craft 5 pieces with their Laravel equivalents:
+
+- The GraphQL API is served at `/api` by `routes/api.php`, which `bootstrap/app.php` registers. It runs Craft's `craft` middleware but not `craft.web`, so requests are stateless: they authenticate with a bearer token or fall back to the public schema, and need no CSRF token. Craft 6 no longer reads site URL rules from `config/craft/routes.php`.
+- `config/cors.php` allows the front end (`PRIMARY_SITE_URL`) to call it, replacing `allowedGraphqlOrigins`.
+- `app/Listeners/AddAuthorFieldsToGql.php` adds `authorId` and `authorName` to entries, replacing the `authorinfo` Yii module. Laravel discovers it from its type-hinted event.
+- `@preview` defaults to an empty string, because Craft 6 alpha crashes on a null alias.

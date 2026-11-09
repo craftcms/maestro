@@ -1,0 +1,38 @@
+name: starter-nuxt
+type: php
+docroot: backend/public
+php_version: "8.5"
+nodejs_version: "22"
+webserver_type: nginx-fpm
+composer_root: backend
+xdebug_enabled: false
+additional_hostnames:
+  - api.starter-nuxt
+database:
+    type: postgres
+    version: "17"
+use_dns_when_possible: true
+composer_version: "2"
+corepack_enable: false
+upload_dirs:
+  - uploads
+web_extra_exposed_ports:
+  - name: nuxt
+    container_port: 3000
+    http_port: 3000
+    https_port: 3001
+  - name: devtools
+    container_port: 9310
+    http_port: 9310
+    https_port: 9311
+web_environment:
+  - VIRTUAL_HOST=starter-nuxt.ddev.site,api.starter-nuxt.ddev.site
+  - NUXT_DEVTOOLS_HOST=0.0.0.0
+  - APP_URL=https://api.starter-nuxt.ddev.site
+  - PRIMARY_SITE_URL=https://starter-nuxt.ddev.site
+  - DB_CONNECTION=pgsql
+  - DB_HOST=db
+  - DB_PORT=5432
+  - DB_DATABASE=db
+  - DB_USERNAME=db
+  - DB_PASSWORD=db
