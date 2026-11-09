@@ -39,11 +39,11 @@ Craft 5 kits:
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
-| `twig` | Craft5/Blank → Craft5/Starter → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
-| `wordpress` | Craft5/Blank → Craft5/Starter → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
-| `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
-| `next` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
-| `astro` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
+| `twig-5` | Craft5/Blank → Craft5/Starter → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
+| `wordpress-5` | Craft5/Blank → Craft5/Starter → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
+| `nuxt-5` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
+| `next-5` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
+| `astro-5` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
 
 Craft 6 kits:
 
@@ -84,7 +84,7 @@ Headless kits share one Craft backend, so its project config can't name the site
 cd orchestrator
 composer install
 
-php artisan build twig     # build a kit into ../build
+php artisan build twig-5   # build a kit into ../build
 # ...install, run, and edit the kit in ../build...
 php artisan sync           # copy your edits back into kits/
 ```

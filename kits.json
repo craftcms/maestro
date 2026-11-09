@@ -10,7 +10,7 @@
         }
     },
     "kits": {
-        "twig": {
+        "twig-5": {
             "name": "Twig (Craft 5)",
             "craft": 5,
             "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/Guestbook", "Craft5/Twig"],
@@ -24,14 +24,14 @@
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
         },
-        "wordpress": {
+        "wordpress-5": {
             "name": "WordPress (Craft 5)",
             "craft": 5,
             "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/WordPress"],
             "repository": "craftcms/starter-wordpress",
             "branch": "5.x"
         },
-        "nuxt": {
+        "nuxt-5": {
             "name": "Nuxt (Craft 5)",
             "craft": 5,
             "layers": [
@@ -43,7 +43,7 @@
             "repository": "craftcms/starter-nuxt",
             "branch": "5.x"
         },
-        "next": {
+        "next-5": {
             "name": "Next (Craft 5)",
             "craft": 5,
             "layers": [
@@ -55,7 +55,7 @@
             "repository": "craftcms/starter-next",
             "branch": "5.x"
         },
-        "astro": {
+        "astro-5": {
             "name": "Astro (Craft 5)",
             "craft": 5,
             "layers": [
