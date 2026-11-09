@@ -49,6 +49,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
+          # Pull requests opened with GITHUB_TOKEN don't trigger the Tests workflow.
+          token: ${{ secrets.STARTER_KIT_TOKEN }}
           branch: automation/update-craft-${{ matrix.craft }}
           title: Update the Craft ${{ matrix.craft }} kits
           commit-message: Update the Craft ${{ matrix.craft }} kits

@@ -29,6 +29,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
+          # Pull requests opened with GITHUB_TOKEN don't trigger the Tests workflow.
+          token: ${{ secrets.STARTER_KIT_TOKEN }}
           branch: automation/sync-craft-skeleton
           title: Sync craftcms/craft skeleton changes
           commit-message: Sync craftcms/craft skeleton changes

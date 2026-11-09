@@ -122,7 +122,7 @@ The Tests workflow fails when a kit's project config doesn't match its Craft ver
 ## Automation
 
 - **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, builds the frontend if the kit has one, and requests the control panel login page (plus the home page for non-headless kits).
-- **Build and Push Kit Changes** builds every kit on `main` and pushes the result to the kit's repository and branch. It needs a `STARTER_KIT_TOKEN` secret that can push to those repositories.
+- **Build and Push Kit Changes** builds every kit on `main` and pushes the result to the kit's repository and branch. It needs a `STARTER_KIT_TOKEN` secret that can push to those repositories. The two workflows below open their pull requests with it too, because pull requests opened with the default `GITHUB_TOKEN` don't trigger Tests. So it also needs write access to contents and pull requests on this repository.
 - **Sync Craft Skeleton** opens a weekly pull request that refreshes the `*/Blank` layers from `craftcms/craft`.
 - **Update Craft** runs `craft:update 5` and `craft:update 6` weekly against a Postgres service and opens a pull request per Craft version with the updated locks and project config. Each version runs on its own, so a broken Craft release only blocks its own update.
 
