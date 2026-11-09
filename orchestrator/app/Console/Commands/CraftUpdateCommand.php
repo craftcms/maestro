@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
+use PDO;
 use RuntimeException;
 
 use function Laravel\Prompts\info;
@@ -18,7 +19,7 @@ class CraftUpdateCommand extends Command
     protected $signature = 'craft:update
         {craft : The Craft major version whose kits to update (5 or 6)}
         {--constraint= : New craftcms/cms constraint, such as ^5.13.0 (defaults to the current one)}
-        {--db-driver=pgsql} {--db-host=127.0.0.1} {--db-port=5432}
+        {--db-host=127.0.0.1} {--db-port=5432}
         {--db-database=craft : A scratch database; its tables are dropped before each install}
         {--db-user=craft} {--db-password=craft}';
 
@@ -51,7 +52,7 @@ class CraftUpdateCommand extends Command
             $config = $this->owner($maestro, $handle, ltrim("{$root}/{$projectConfig}", '/'))
                 ?? throw new RuntimeException("{$handle} has no project config.");
 
-            $runs[$lock.'|'.$config] ??= ['kit' => $handle, 'root' => $root, 'lock' => dirname($lock)];
+            $runs[$lock.'|'.$config] ??= ['kit' => $handle, 'root' => $root, 'lock' => dirname($lock), 'seed' => $kit['seed'] ?? null];
         }
 
         // Every run installs on the version the kits were locked to, even after an
@@ -76,7 +77,7 @@ class CraftUpdateCommand extends Command
 
             info("Installing {$run['kit']} on its locked Craft version...");
             $this->shell($project, ['composer', 'install', '--no-interaction']);
-            $this->install($craft, $project);
+            $this->install($craft, $project, $run['seed']);
 
             if (isset($updated[$run['lock']])) {
                 // The shared lock is already updated, so install it rather than resolving again.
@@ -101,6 +102,13 @@ class CraftUpdateCommand extends Command
             // Installing also writes files the kits shouldn't ship, such as config/license.key,
             // so only the Composer files and project config sync back.
             $keep = [':!composer.json', ':!composer.lock', ':!'.dirname($projectConfig)];
+
+            // A kit with seed content rewrites its dump on the updated schema.
+            if ($run['seed']) {
+                $this->shell($project, explode(' ', $run['seed']['dump']));
+                $keep[] = ':!'.$run['seed']['file'];
+            }
+
             $this->shell($project, ['git', 'checkout', '--', '.', ...$keep]);
             $this->shell($project, ['git', 'clean', '-fdqx', '--', '.', ...$keep]);
             $this->call('sync');
@@ -133,10 +141,13 @@ class CraftUpdateCommand extends Command
         return null;
     }
 
-    protected function install(int $craft, string $project): void
+    /**
+     * @param  array{file: string, dump: string}|null  $seed
+     */
+    protected function install(int $craft, string $project, ?array $seed): void
     {
         $env = $craft === 5 ? [
-            'CRAFT_DB_DRIVER' => $this->option('db-driver'),
+            'CRAFT_DB_DRIVER' => 'pgsql',
             'CRAFT_DB_SERVER' => $this->option('db-host'),
             'CRAFT_DB_PORT' => $this->option('db-port'),
             'CRAFT_DB_DATABASE' => $this->option('db-database'),
@@ -146,7 +157,7 @@ class CraftUpdateCommand extends Command
             'PRIMARY_SITE_URL' => 'http://localhost',
             'CRAFT_BASE_CP_URL' => 'http://localhost',
         ] : [
-            'DB_CONNECTION' => $this->option('db-driver'),
+            'DB_CONNECTION' => 'pgsql',
             'DB_HOST' => $this->option('db-host'),
             'DB_PORT' => $this->option('db-port'),
             'DB_DATABASE' => $this->option('db-database'),
@@ -163,12 +174,47 @@ class CraftUpdateCommand extends Command
         $credentials = ['--username=admin', '--email=admin@example.com', '--password='.Str::random(16)];
 
         if ($craft === 5) {
-            $this->shell($project, ['php', 'craft', 'db/drop-all-tables', '--interactive=0']);
-            $this->shell($project, ['php', 'craft', 'install', '--interactive=0', ...$credentials]);
+            // Not `craft db/drop-all-tables`: booting a kit on another kit's tables can fail,
+            // e.g. Europa reads its database cache table, which the other kits don't have.
+            $this->resetDatabase();
+            $this->shell($project, $seed
+                ? ['php', 'craft', 'db/restore', $seed['file'], '--interactive=0']
+                : ['php', 'craft', 'install', '--interactive=0', ...$credentials]);
         } else {
             $this->shell($project, ['php', 'artisan', 'db:wipe', '--force']);
             $this->shell($project, ['php', 'artisan', 'craft:install', '--no-interaction', ...$credentials]);
         }
+    }
+
+    /**
+     * Empty the scratch Postgres database without booting a kit.
+     */
+    protected function resetDatabase(): void
+    {
+        $pdo = new PDO(
+            "pgsql:host={$this->option('db-host')};port={$this->option('db-port')};dbname={$this->option('db-database')}",
+            $this->option('db-user'),
+            $this->option('db-password'),
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION],
+        );
+
+        // Drop what's in the schema, not the schema itself: a recreated public schema has a
+        // different owner, so pg_dump would write its CREATE SCHEMA into a seed dump.
+        $pdo->exec(<<<'SQL'
+            DO $$
+            DECLARE r record;
+            BEGIN
+                FOR r IN SELECT viewname AS name FROM pg_views WHERE schemaname = 'public' LOOP
+                    EXECUTE 'DROP VIEW IF EXISTS public.' || quote_ident(r.name) || ' CASCADE';
+                END LOOP;
+                FOR r IN SELECT tablename AS name FROM pg_tables WHERE schemaname = 'public' LOOP
+                    EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.name) || ' CASCADE';
+                END LOOP;
+                FOR r IN SELECT sequencename AS name FROM pg_sequences WHERE schemaname = 'public' LOOP
+                    EXECUTE 'DROP SEQUENCE IF EXISTS public.' || quote_ident(r.name) || ' CASCADE';
+                END LOOP;
+            END $$
+            SQL);
     }
 
     /**

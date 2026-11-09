@@ -20,6 +20,7 @@ kits/
     Nuxt/       starter-nuxt's Craft 5 DDEV config, backend .env example, and README
     Next/       starter-next's Craft 5 DDEV config, backend .env example, and README
     Astro/      starter-astro's Craft 5 DDEV config, backend .env example, and README
+    Europa/     the Europa Museum demo: its own Composer files, content model, templates, front-end build, images and seed.sql
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/    what every Craft 6 kit shares: Composer files and lock, .gitignore, licence (the skeleton's .env.example already has database settings)
@@ -45,6 +46,7 @@ Craft 5 kits:
 | `nuxt-5` | Craft5/Blank → Craft5/Starter → Craft5/Headless (all into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next-5` | Craft5/Blank → Craft5/Starter → Craft5/Headless (all into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
 | `astro-5` | Craft5/Blank → Craft5/Starter → Craft5/Headless (all into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
+| `europa-5` | Craft5/Blank → Craft5/Starter → Craft5/Europa | `craftcms/europa-museum@5.x` |
 
 Craft 6 kits:
 
@@ -118,6 +120,18 @@ For each lock and project config pair (`twig-5` or `twig-6` for Guestbook, `word
 While Craft 6 is in alpha, nearly every alpha changes the schema version, so without the lock a fresh install would pick up a newer alpha than the project config was written with and fail.
 
 The Tests workflow fails when a kit's project config doesn't match its Craft version.
+
+### Kits with content
+
+A demo such as Europa ships real content, so it installs from a database dump instead of `craft install`. Its `kits.json` entry names the dump and the command that writes it:
+
+```json
+"seed": { "file": "seed.sql", "dump": "php craft demos/dump" }
+```
+
+The Tests workflow restores the dump and runs `craft up`, and `craft:update` restores it, updates, then rewrites it with the dump command and syncs it back with the lock and project config.
+
+To change Europa's content or content model, build it, restore `seed.sql` into a Postgres database, make the changes, run `php craft demos/dump`, and `php artisan sync`. Don't run `demos/seed` before dumping: it randomises news dates and adds fake Freeform submissions. The dump keeps only the latest revision of each element, leaves out caches, sessions and logs, and sorts each table's rows, so its diff shows only what changed. Images in `web/uploads` are at most 2560px; their transforms are generated on demand and ignored.
 
 ## Automation
 

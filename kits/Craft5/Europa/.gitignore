@@ -1,0 +1,55 @@
+# CRAFT ENVIRONMENT
+.env
+
+# COMPOSER
+/vendor
+
+# CRAFT STORAGE
+!/storage/
+/storage/*
+!/storage/rebrand/
+
+# UPLOADS
+# Image transforms are generated on demand
+/web/uploads/**/_*/
+
+# WEB
+/web/cpresources
+/web/css
+/web/images
+/web/js
+/web/fonts
+/web/mix-manifest.json
+/web/favicon.ico
+/web/manifest.json
+/web/browserconfig.xml
+
+# BUILD FILES
+/node_modules
+/yarn-error.log
+/npm-debug.log
+
+# MISC FILES
+.cache
+.DS_Store
+.vscode
+.idea
+/web/css/site.css.map
+/web/js/site.js.map
+
+# For demo infrastructure only
+!seed.sql
+!/web/assets
+!/web/css
+!/web/images
+!/web/js
+!/web/fonts
+!/web/mix-manifest.json
+!/web/favicon.ico
+!/web/manifest.json
+!/web/browserconfig.xml
+
+/submodules
+
+# LOCAL DEVELOPMENT
+docker-compose.override.yml

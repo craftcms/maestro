@@ -92,7 +92,12 @@ jobs:
             set_env CRAFT_SECURITY_KEY ci
             set_env PRIMARY_SITE_URL http://127.0.0.1:8000
             set_env CRAFT_BASE_CP_URL http://127.0.0.1:8000
-            php craft install --interactive=0 --username=admin --email=admin@example.com --password=password
+            if [ -n "${{ matrix.seed }}" ]; then
+              php craft db/restore "${{ matrix.seed }}" --interactive=0
+              php craft up --interactive=0
+            else
+              php craft install --interactive=0 --username=admin --email=admin@example.com --password=password
+            fi
             php -S 127.0.0.1:8000 -t web web/index.php &
           else
             cp .env.example .env

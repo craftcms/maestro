@@ -1,0 +1,12 @@
+columnSuffix: null
+handle: form
+instructions: null
+name: Form
+searchable: true
+settings:
+  forms: '*'
+tip: null
+translationKeyFormat: null
+translationMethod: none
+type: Solspace\Freeform\FieldTypes\FormFieldType
+warning: null

@@ -35,7 +35,7 @@ class Maestro
     }
 
     /**
-     * @return array<string, array{name: string, craft: int, layers: list<string|array{layer: string, into?: string}>, repository: string, branch: string}>
+     * @return array<string, array{name: string, craft: int, layers: list<string|array{layer: string, into?: string}>, repository: string, branch: string, seed?: array{file: string, dump: string}}>
      */
     public function kits(): array
     {
@@ -43,7 +43,7 @@ class Maestro
     }
 
     /**
-     * @return array{name: string, craft: int, layers: list<string|array{layer: string, into?: string}>, repository: string, branch: string}
+     * @return array{name: string, craft: int, layers: list<string|array{layer: string, into?: string}>, repository: string, branch: string, seed?: array{file: string, dump: string}}
      */
     public function kit(string $handle): array
     {

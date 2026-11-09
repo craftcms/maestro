@@ -21,6 +21,8 @@ class MatrixCommand extends Command
             'craft' => $kit['craft'],
             // Where the Craft project sits in the build: the folder its skeleton layer is copied into.
             'root' => $maestro->layers($handle)[0]['into'],
+            // A database dump the kit is installed from instead of `craft install`, relative to its root.
+            'seed' => $kit['seed']['file'] ?? '',
         ])->values()));
 
         return self::SUCCESS;
