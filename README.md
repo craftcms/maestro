@@ -25,10 +25,11 @@ kits/
     Headless/
     Nuxt/
     Next/
+    Astro/
   Shared/
     Nuxt/       starter-nuxt's frontend/, which works with either Craft version
     Next/       starter-next's frontend/, which works with either Craft version
-    Astro/      starter-astro's frontend/
+    Astro/      starter-astro's frontend/, which works with either Craft version
 ```
 
 | Kit | Layers | Pushed to |
@@ -38,6 +39,7 @@ kits/
 | `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
 | `astro` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
+| `astro-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |
 | `next-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Next → Craft6/Next | `craftcms/starter-next@6.x` |
 | `nuxt-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 
