@@ -23,6 +23,8 @@ class MatrixCommand extends Command
             'root' => $maestro->layers($handle)[0]['into'],
             // A database dump the kit is installed from instead of `craft install`, relative to its root.
             'seed' => $kit['seed']['file'] ?? '',
+            // Shell commands, run from the root of the build, that build the assets the kit ships.
+            'build' => implode(' && ', $kit['build']['commands'] ?? []),
         ])->values()));
 
         return self::SUCCESS;

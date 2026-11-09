@@ -16,14 +16,14 @@ README.md covers each mechanism in detail. This skill covers how to find the rig
 
 ```
 maestro/
-├── kits.json       # every kit: its layers, Craft version, target repository and branch, optional seed
+├── kits.json       # every kit: its layers, Craft version, target repository and branch, optional seed and build commands
 ├── kits/           # the layers
 ├── orchestrator/   # Laravel app with the build, sync and update commands
 ├── build/          # the last built kit, git-ignored; edit it, then sync
 └── .github/        # Tests, publishing, and the weekly skeleton and Craft updates
 ```
 
-Kit handles end in their Craft version: `twig-5`, `wordpress-5`, `europa-5`, `nuxt-5`, `next-5`, `astro-5`, `twig-6`, `blade-6`, `nuxt-6`, `next-6`, `astro-6`. Craft 5 kits publish to the `5.x` branch of their repository and Craft 6 kits to `6.x`.
+Kit handles end in their Craft version: `twig-5`, `wordpress-5`, `europa-5`, `nuxt-5`, `next-5`, `astro-5`, `twig-6`, `blade-6`, `europa-6`, `nuxt-6`, `next-6`, `astro-6`. Craft 5 kits publish to the `5.x` branch of their repository and Craft 6 kits to `6.x`.
 
 ## Layers
 
@@ -36,15 +36,16 @@ Every kit stacks the same base layers for its Craft version, then up to three of
 | `CraftN/Base` | Composer files and the shared `composer.lock`, `.gitignore`, licence, and on Craft 5 the database `.env` settings | every kit |
 | `CraftN/Guestbook` | The guestbook site's content model | `twig-5`, `twig-6`, `blade-6` |
 | `CraftN/Headless` | Headless mode, GraphQL, CORS and content model under `backend/`, plus the backend's DDEV settings | Nuxt, Next and Astro kits |
-| `Frontend/<fe>` | A front end that works on both Craft versions: `frontend/` and its DDEV ports for Nuxt, Next and Astro, and the shared templates for Twig | the kits of that front end |
+| `Frontend/<fe>` | A front end that works on both Craft versions: `frontend/` and its DDEV ports for Nuxt, Next and Astro, the shared templates for Twig, and Europa's templates, uploads, fonts, icons, JavaScript and translations | the kits of that front end |
 | Kit layer | Everything only one kit needs: README, DDEV name, version-specific templates or `.env` overrides | one kit |
 
-The kit layer is always last: `Craft5/Twig`, `Craft6/Blade`, `Craft5/WordPress`, `Craft5/Europa`, `Craft6/Nuxt` and so on. WordPress and Europa have no site-type layer and carry their own content model and `composer.lock`.
+The kit layer is always last: `Craft5/Twig`, `Craft6/Blade`, `Craft5/WordPress`, `Craft5/Europa`, `Craft6/Europa`, `Craft6/Nuxt` and so on. WordPress and Europa have no site-type layer and carry their own content model and `composer.lock`.
 
-Two kit families copy layers into a subfolder with `{ "layer": ..., "into": ... }`:
+Three kit families copy layers into a subfolder with `{ "layer": ..., "into": ... }`:
 
 - Headless kits copy `CraftN/Skeleton` and `CraftN/Base` into `backend/`. `CraftN/Headless` is copied to the root and keeps its Craft files under its own `backend/`, so it can also add to the root `.ddev/config.yaml`.
 - Twig kits copy `Frontend/Twig` into `templates/` on Craft 5 and `resources/views/` on Craft 6.
+- Europa kits copy each folder of `Frontend/Europa` to where their Craft version expects it, such as `uploads` into `web/uploads` on Craft 5 and `public/uploads` on Craft 6. README.md has the full table.
 
 Read `kits.json` for the exact stack of a kit before changing it.
 
@@ -113,7 +114,7 @@ snapshot /tmp/after
 diff -r /tmp/before /tmp/after
 ```
 
-**Changes to what a kit does.** Install and run it the way the Tests workflow does. Follow the Install Craft step in `.github/workflows/tests.yml`. It installs against Postgres from the kit's own project config and fails if installing rewrote that config. For headless kits, install from `build/backend`. Craft 5 kits run `php craft` and serve `web/`. Craft 6 kits are Laravel applications that run `php artisan` and serve `public/`. Request the pages you changed. Kits with a `seed` in `kits.json` restore it with `php craft db/restore` and run `craft up` instead of installing.
+**Changes to what a kit does.** Install and run it the way the Tests workflow does. Follow the Install Craft step in `.github/workflows/tests.yml`. It installs against Postgres from the kit's own project config and fails if installing rewrote that config. For headless kits, install from `build/backend`. Craft 5 kits run `php craft` and serve `web/`. Craft 6 kits are Laravel applications that run `php artisan` and serve `public/`. Request the pages you changed. Kits with a `seed` in `kits.json` restore it instead of installing: `php craft db/restore` then `php craft up` on Craft 5, `php artisan craft:db:restore` then `php artisan craft:up` on Craft 6. Kits with `build` commands in `kits.json` run them from the root of `build/` before you request pages.
 
 **Orchestrator changes.** Run `php artisan test` and `vendor/bin/pint --test` in `orchestrator/`.
 
@@ -125,7 +126,7 @@ DDEV doesn't run in every environment. If you change DDEV config and can't run D
 
 1. Choose the stack: the base layers for its Craft version, a site-type or front-end layer if one fits, and a new kit layer.
 2. Create the kit layer with only what the kit needs: a README with the Contributing section the other kits have, the DDEV `name` and hostnames, and its `.env` overrides.
-3. Add an entry to `kits.json` with `name`, `craft`, `layers`, `repository` and `branch` (`5.x` or `6.x`).
+3. Add an entry to `kits.json` with `name`, `craft`, `layers`, `repository` and `branch` (`5.x` or `6.x`). Add `seed` if it installs from a database dump, and `build` if it ships built front-end assets.
 4. Add the kit to the matching table in README.md.
 5. Build it, install it as described above, and check that the other kits still build unchanged.
 
@@ -133,17 +134,19 @@ The target repository must exist before the publish workflow can push to it.
 
 ## Europa
 
-`europa-5` is a demo with real content. It installs from `kits/Craft5/Europa/seed.sql` instead of `craft install`. To change its content or content model:
+`europa-5` and `europa-6` are demos with real content. They install from `kits/Craft5/Europa/seed.sql` and `kits/Craft6/Europa/seed.sql` instead of `craft install`. Each version has its own dump, content model and templates. Files that are byte-identical on both live in `Frontend/Europa`, including all but two templates. Write shared templates without `craft.app` or Laravel helpers, and without the `{# @var craft #}` hint; put version-specific ones in `CraftN/Europa` as overrides. To change the content or content model:
 
-1. Build it and restore `seed.sql` into a Postgres database.
+1. Build the kit and restore its `seed.sql` into a Postgres database.
 2. Make the changes.
-3. Run `php craft demos/dump` in `build/`, then `php artisan sync`.
+3. Run `php craft demos/dump` (Craft 5) or `php artisan demos:dump` (Craft 6) in `build/`, then `php artisan sync`.
 
-Don't run `demos/seed` before dumping, because it randomises news dates and adds fake Freeform submissions. Images in `web/uploads` are at most 2560px wide and are committed. Their transforms are generated on demand and ignored.
+Don't run `demos:seed` or `demos/seed` before dumping, because it randomises news dates (and on Craft 5 adds fake Freeform submissions). `europa-6` has no third-party plugins: no Freeform, no SEOmatic. Keep it that way. Images in `Frontend/Europa/uploads` are at most 2560px wide and are committed.
+
+`europa-6` builds its Vite assets in CI from the `build` commands in `kits.json`, so `public/build` is never committed to Maestro. `europa-5` still commits Laravel Mix output in `web/assets/dist`. Their transforms are generated on demand and ignored.
 
 ## Craft 6
 
-Craft 6 projects are Laravel applications. Their templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The DDEV project type is `laravel`. While the Craft 6 ecosystem is in alpha, some Craft 5 plugins have no Craft 6 release, so the Craft 6 kits use stand-ins, such as a Markdown field instead of CKEditor. README.md's Craft 6 notes list them. There is no Craft 6 WordPress kit until `wp-import` and `verbb/comments` support Craft 6, and no Craft 6 Europa kit yet.
+Craft 6 projects are Laravel applications. Their templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The DDEV project type is `laravel`. While the Craft 6 ecosystem is in alpha, some Craft 5 plugins have no Craft 6 release, so the Craft 6 kits use stand-ins, such as a Markdown field instead of CKEditor. README.md's Craft 6 notes list them. There is no Craft 6 WordPress kit until `wp-import` and `verbb/comments` support Craft 6.
 
 ## Rules
 

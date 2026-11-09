@@ -109,7 +109,12 @@ jobs:
             set_env DB_PASSWORD craft
             set_env APP_URL http://127.0.0.1:8000
             php artisan key:generate
-            php artisan craft:install --no-interaction --username=admin --email=admin@example.com --password=password
+            if [ -n "${{ matrix.seed }}" ]; then
+              php artisan craft:db:restore "${{ matrix.seed }}" --no-interaction
+              php artisan craft:up --no-interaction --noBackup
+            else
+              php artisan craft:install --no-interaction --username=admin --email=admin@example.com --password=password
+            fi
             php artisan serve --port=8000 &
           fi
 
@@ -118,9 +123,16 @@ jobs:
           git diff --exit-code -- config/project config/craft/project
 
       - uses: actions/setup-node@v5
-        if: hashFiles('build/frontend/package.json') != ''
+        if: matrix.build != '' || hashFiles('build/frontend/package.json') != ''
         with:
           node-version: '22'
+
+      - name: Build Assets
+        if: matrix.build != ''
+        working-directory: build
+        env:
+          BUILD: ${{ matrix.build }}
+        run: bash -c "$BUILD"
 
       - name: Build Frontend
         if: hashFiles('build/frontend/package.json') != ''

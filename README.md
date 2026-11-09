@@ -21,7 +21,7 @@ kits/
     Nuxt/       starter-nuxt's DDEV project name, backend .env example, and README
     Next/       starter-next's DDEV project name, backend .env example, and README
     Astro/      starter-astro's DDEV project name, backend .env example, and README
-    Europa/     the Europa Museum demo: its own Composer files, content model, templates, front-end build, images and seed.sql
+    Europa/     the Europa Museum demo: its own Composer files, content model, templates, styles, Laravel Mix build output and seed.sql
   Craft6/
     Skeleton/   mirror of craftcms/craft@6.x
     DDEV/       the DDEV config every Craft 6 kit starts from
@@ -33,11 +33,13 @@ kits/
     Nuxt/
     Next/
     Astro/
+    Europa/     the Europa Museum demo on Craft 6: its own Composer files and lock, content model, two template overrides, styles, Vite config and seed.sql
   Frontend/
     Twig/       starter-twig's templates that work with either Craft version, copied into templates/ or resources/views/
     Nuxt/       starter-nuxt's frontend/ and its DDEV ports, which work with either Craft version
     Next/       starter-next's frontend/ and its DDEV ports, which work with either Craft version
     Astro/      starter-astro's frontend/ and its DDEV ports, which work with either Craft version
+    Europa/     Europa's templates, uploads, fonts, icons, JavaScript and translations, each folder copied to where that Craft version expects it
 ```
 
 Craft 5 kits:
@@ -49,7 +51,7 @@ Craft 5 kits:
 | `nuxt-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Next → Craft5/Next | `craftcms/starter-next@5.x` |
 | `astro-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
-| `europa-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/Europa | `craftcms/europa-museum@5.x` |
+| `europa-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Frontend/Europa/* → Craft5/Europa | `craftcms/europa-museum@5.x` |
 
 Craft 6 kits:
 
@@ -57,6 +59,7 @@ Craft 6 kits:
 | --- | --- | --- |
 | `twig-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Frontend/Twig (into `resources/views/`) → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `blade-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Craft6/Blade | `craftcms/starter-blade@6.x` |
+| `europa-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Frontend/Europa/* → Craft6/Europa | `craftcms/europa-museum@6.x` |
 | `nuxt-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 | `next-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Next → Craft6/Next | `craftcms/starter-next@6.x` |
 | `astro-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |
@@ -78,6 +81,19 @@ A layer can be copied into a subfolder instead of the build root, the way headle
 `Craft5/Headless` is copied to the build root, with its Craft files under its own `backend/`, so it can also add to the root `.ddev/` config.
 
 `Frontend/Twig` is copied into `templates/` on Craft 5 and `resources/views/` on Craft 6. It holds only templates that work on both. `Craft5/Twig` and `Craft6/Twig` override the few that use version-specific APIs, such as `craft.app` on Craft 5 or Laravel's `session()` on Craft 6. `sync` puts a new template in `CraftN/Twig`; pass `--layer=Frontend/Twig` when it works on both.
+
+The folders in `Frontend/Europa` are mounted one by one, because the two Europa kits keep the same files in different places:
+
+| Folder | Craft 5 | Craft 6 |
+| --- | --- | --- |
+| `uploads` | `web/uploads` | `public/uploads` |
+| `fonts` | `src/fonts` | `src/fonts` |
+| `icons` | `src/images/icons` | `public/assets/images/icons` |
+| `js` | `src/js` | `src/js` |
+| `translations` | `translations` | `lang` |
+| `templates` | `templates` | `resources/views` |
+
+The shared templates leave out the `{# @var craft ... #}` hint, because the class moved in Craft 6. `Craft5/Europa` and `Craft6/Europa` override only `_/layouts/base.twig` (twigpack or Vite) and `_/components/picture.twig` (`craft.app.imageTransforms` or the `ImageTransforms` facade). Craft 5 adds the contact form block and the files it serves from `templates/`. The styles stay in each kit's layer: the font URLs and the form block differ, and Laravel Mix and Vite resolve relative URLs differently.
 
 ### .env files
 
@@ -118,6 +134,16 @@ php artisan sync           # copy your edits back into kits/
 
 Kits ship `composer.lock` but not `package-lock.json`, which `build` keeps out of `sync`. Laravel's starter kits ship neither, but Craft refuses to install when its schema version differs from the one in the project config, so the lock pins Craft to the version that wrote it.
 
+### Built assets
+
+A kit that ships built front-end assets lists the commands that build them, and where they land, instead of committing them to Maestro:
+
+```json
+"build": { "commands": ["npm install", "npm run build"], "output": ["public/build"] }
+```
+
+The commands run from the root of the build. Build and Push Kit Changes runs them before it copies the build to the kit's repository, so the kit still ships `public/build`, and Tests runs them before its smoke test. `build` keeps the output out of `sync`, so building locally doesn't copy it back into a layer. Only `europa-6` uses this so far. `europa-5` still commits `web/assets/dist`, because its Laravel Mix build fails on a fresh `npm install` without a lock file.
+
 Review `git status` before committing. Files Craft generates during install, such as `config/license.key`, will show up too.
 
 ### Amp orbs
@@ -153,13 +179,13 @@ A demo such as Europa ships real content, so it installs from a database dump in
 "seed": { "file": "seed.sql", "dump": "php craft demos/dump" }
 ```
 
-The Tests workflow restores the dump and runs `craft up`, and `craft:update` restores it, updates, then rewrites it with the dump command and syncs it back with the lock and project config.
+`europa-6` dumps with `php artisan demos:dump`. The Tests workflow restores the dump and runs `craft up`, and `craft:update` restores it, updates, then rewrites it with the dump command and syncs it back with the lock and project config.
 
-To change Europa's content or content model, build it, restore `seed.sql` into a Postgres database, make the changes, run `php craft demos/dump`, and `php artisan sync`. Don't run `demos/seed` before dumping: it randomises news dates and adds fake Freeform submissions. The dump keeps only the latest revision of each element, leaves out caches, sessions and logs, and sorts each table's rows, so its diff shows only what changed. Images in `web/uploads` are at most 2560px; their transforms are generated on demand and ignored.
+To change Europa's content or content model, build it, restore `seed.sql` into a Postgres database, make the changes, run `php craft demos/dump` (`php artisan demos:dump` on Craft 6), and `php artisan sync`. Don't run `demos/seed` before dumping: it randomises news dates and adds fake Freeform submissions. The dump keeps only the latest revision of each element, leaves out caches, sessions and logs, and sorts each table's rows, so its diff shows only what changed. Images in `Frontend/Europa/uploads` are at most 2560px; their transforms are generated on demand and ignored.
 
 ## Automation
 
-- **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, builds the frontend if the kit has one, and requests the control panel login page (plus the home page for non-headless kits).
+- **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, runs the kit's build commands, builds the frontend if the kit has one, and requests the control panel login page (plus the home page for non-headless kits).
 - **Build and Push Kit Changes** builds every kit on `main` and pushes the result to the kit's repository and branch. It needs a `STARTER_KIT_TOKEN` secret that can push to those repositories. The two workflows below open their pull requests with it too, because pull requests opened with the default `GITHUB_TOKEN` don't trigger Tests. So it also needs write access to contents and pull requests on this repository.
 - **Sync Craft Skeleton** opens a weekly pull request that refreshes the `*/Skeleton` layers from `craftcms/craft`.
 - **Update Craft** runs `craft:update 5` and `craft:update 6` weekly against a Postgres service and opens a pull request per Craft version with the updated locks and project config. Each version runs on its own, so a broken Craft release only blocks its own update.
@@ -172,6 +198,9 @@ While the Craft 6 ecosystem is in alpha:
 
 - `pageContent` is a core Markdown field, because `craftcms/ckeditor` has no Craft 6 release yet.
 - The `cloud` filesystem is a local Laravel disk in `config/filesystems.php`, because `craftcms/cloud` has no Craft 6 release yet.
+- `europa-6` takes `craftcms/ckeditor` and `craftcms/html-field` from their `feature/craft-6` branches, and its own lock pins those commits.
+
+`europa-6` was upgraded from the Craft 5 demo's database without its third-party plugins: no Freeform contact form, no SEOmatic, and the navigation global set became an entry. Its control panel logo and icon come from `cpLogoUrl` and `cpIconUrl` in `config/craft/general.php`.
 
 The Craft 6 headless backend replaces Craft 5 pieces with their Laravel equivalents:
 

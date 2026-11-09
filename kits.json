@@ -56,10 +56,41 @@
         "europa-5": {
             "name": "Europa Museum (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Skeleton", "Craft5/DDEV", "Craft5/Base", "Craft5/Europa"],
+            "layers": [
+                "Craft5/Skeleton",
+                "Craft5/DDEV",
+                "Craft5/Base",
+                { "layer": "Frontend/Europa/uploads", "into": "web/uploads" },
+                { "layer": "Frontend/Europa/fonts", "into": "src/fonts" },
+                { "layer": "Frontend/Europa/icons", "into": "src/images/icons" },
+                { "layer": "Frontend/Europa/js", "into": "src/js" },
+                { "layer": "Frontend/Europa/translations", "into": "translations" },
+                { "layer": "Frontend/Europa/templates", "into": "templates" },
+                "Craft5/Europa"
+            ],
             "seed": { "file": "seed.sql", "dump": "php craft demos/dump" },
             "repository": "craftcms/europa-museum",
             "branch": "5.x"
+        },
+        "europa-6": {
+            "name": "Europa Museum (Craft 6)",
+            "craft": 6,
+            "layers": [
+                "Craft6/Skeleton",
+                "Craft6/DDEV",
+                "Craft6/Base",
+                { "layer": "Frontend/Europa/uploads", "into": "public/uploads" },
+                { "layer": "Frontend/Europa/fonts", "into": "src/fonts" },
+                { "layer": "Frontend/Europa/icons", "into": "public/assets/images/icons" },
+                { "layer": "Frontend/Europa/js", "into": "src/js" },
+                { "layer": "Frontend/Europa/translations", "into": "lang" },
+                { "layer": "Frontend/Europa/templates", "into": "resources/views" },
+                "Craft6/Europa"
+            ],
+            "seed": { "file": "seed.sql", "dump": "php artisan demos:dump" },
+            "build": { "commands": ["npm install", "npm run build"], "output": ["public/build"] },
+            "repository": "craftcms/europa-museum",
+            "branch": "6.x"
         },
         "nuxt-5": {
             "name": "Nuxt (Craft 5)",

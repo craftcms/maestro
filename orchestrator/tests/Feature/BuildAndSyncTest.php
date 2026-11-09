@@ -74,6 +74,7 @@ beforeEach(function () {
         'kits' => ['demo' => [
             'name' => 'Demo', 'craft' => 5, 'repository' => 'craftcms/starter-demo', 'branch' => 'main',
             'layers' => ['Craft5/Skeleton', 'Craft5/Base', 'Craft5/Kit'],
+            'build' => ['commands' => ['npm run build'], 'output' => ['web/dist']],
         ], 'headless' => [
             'name' => 'Headless', 'craft' => 5, 'repository' => 'craftcms/starter-headless', 'branch' => 'main',
             'layers' => [
@@ -110,6 +111,9 @@ test('sync writes build changes to the owning layer and never to the skeleton', 
     File::put("{$build}/config/project/sections.yaml", 'new');      // new, next to Base's project config
     File::put("{$build}/README.md", 'new');                         // new, at the root
     File::delete("{$build}/templates/_layout.twig");                // owned by Base
+    File::ensureDirectoryExists("{$build}/web/dist");
+    File::put("{$build}/web/dist/site.css", 'built');               // the kit's build output, built in CI
+    File::put("{$build}/web/robots.txt", 'new');                    // new, next to the build output
 
     $this->artisan('sync')->assertSuccessful();
 
@@ -120,7 +124,9 @@ test('sync writes build changes to the owning layer and never to the skeleton', 
         ->and(File::get("{$kits}/Craft5/Base/config/general.php"))->toBe('edited')
         ->and(File::get("{$kits}/Craft5/Base/config/project/sections.yaml"))->toBe('new')
         ->and(File::get("{$kits}/Craft5/Kit/README.md"))->toBe('new')
-        ->and(File::exists("{$kits}/Craft5/Base/templates/_layout.twig"))->toBeFalse();
+        ->and(File::exists("{$kits}/Craft5/Base/templates/_layout.twig"))->toBeFalse()
+        ->and(File::get("{$kits}/Craft5/Kit/web/robots.txt"))->toBe('new')
+        ->and(File::exists("{$kits}/Craft5/Kit/web/dist"))->toBeFalse();
 
     // A second sync only sees changes made since the first one.
     File::put("{$kits}/Craft5/Kit/README.md", 'changed in kits/');

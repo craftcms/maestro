@@ -54,6 +54,19 @@ jobs:
           composer install --no-interaction --prefer-dist
           php artisan build ${{ matrix.kit }}
 
+      - uses: actions/setup-node@v5
+        if: matrix.build != ''
+        with:
+          node-version: '22'
+
+      # Built assets aren't committed to Maestro; kits that ship them build them here.
+      - name: Build Assets
+        if: matrix.build != ''
+        working-directory: maestro/build
+        env:
+          BUILD: ${{ matrix.build }}
+        run: bash -c "$BUILD"
+
       - name: Checkout ${{ matrix.repository }}
         uses: actions/checkout@v5
         with:
@@ -67,7 +80,8 @@ jobs:
         run: |
           # The first push to a new branch (e.g. 6.x) starts it from the default branch.
           git checkout ${{ matrix.branch }} 2>/dev/null || git checkout -b ${{ matrix.branch }}
-          rsync -a --delete --exclude .git ../maestro/build/ .
+          # --force below would add node_modules too, and kits don't ship npm lock files.
+          rsync -a --delete --exclude .git --exclude node_modules --exclude package-lock.json ../maestro/build/ .
 
       - name: Commit and Push
         working-directory: kit

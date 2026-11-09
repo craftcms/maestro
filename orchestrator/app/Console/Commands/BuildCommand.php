@@ -50,8 +50,10 @@ class BuildCommand extends Command
         // what changed and the kit's .gitignore files decide what counts.
         Process::path($build)->run('git init -q')->throw();
         File::put("{$build}/.git/maestro-kit", $handle);
-        // Kits don't ship npm lock files, so the one `npm install` writes stays out of `sync`.
-        File::append("{$build}/.git/info/exclude", "package-lock.json\n");
+        // Kits don't ship npm lock files, so the one `npm install` writes stays out of `sync`,
+        // and neither do built assets: CI runs the kit's build commands when it publishes.
+        $exclude = ['package-lock.json', ...array_map(fn (string $path) => '/'.trim($path, '/'), $kit['build']['output'] ?? [])];
+        File::append("{$build}/.git/info/exclude", implode("\n", $exclude)."\n");
         $this->commitBuild($build, 'Build '.$handle);
 
         info("{$kit['name']} built in {$build}");

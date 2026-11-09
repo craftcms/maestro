@@ -1,0 +1,28 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "laravel-vite-plugin": "^3.0.0",
+    "sass": "^1.94.2",
+    "vite": "^8.0.0"
+  },
+  "dependencies": {
+    "flickity": "^2.2.1",
+    "flickity-imagesloaded": "^2.0.0",
+    "gsap": "^3.6.0",
+    "lazysizes": "^5.3.0",
+    "lodash.clamp": "^4.0.3",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
+    "picturefill": "^3.0.3",
+    "tiny-emitter": "^2.1.0"
+  },
+  "optionalDependencies": {
+    "@laravel/multiplex": "^0.4.1"
+  }
+}

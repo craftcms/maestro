@@ -182,7 +182,9 @@ class CraftUpdateCommand extends Command
                 : ['php', 'craft', 'install', '--interactive=0', ...$credentials]);
         } else {
             $this->shell($project, ['php', 'artisan', 'db:wipe', '--force']);
-            $this->shell($project, ['php', 'artisan', 'craft:install', '--no-interaction', ...$credentials]);
+            $this->shell($project, $seed
+                ? ['php', 'artisan', 'craft:db:restore', $seed['file'], '--no-interaction']
+                : ['php', 'artisan', 'craft:install', '--no-interaction', ...$credentials]);
         }
     }
 
