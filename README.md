@@ -13,8 +13,8 @@ kits/
   Craft5/
     Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
     Starter/    what starters without a separate front end share: database .env settings, .gitignore, licence
-    Guestbook/  the guestbook site: content model, Twig templates, Cloud
-    Twig/       starter-twig's DDEV config and README
+    Guestbook/  the guestbook site: content model, Composer files, Cloud
+    Twig/       starter-twig: Twig templates, DDEV config, README
     WordPress/  starter-wordpress: WordPress-style content model, templates, comments, wp-import, README
     Headless/   the Craft backend headless kits share: headless mode, GraphQL, CORS, content model
     Nuxt/       starter-nuxt's Craft 5 DDEV config, backend .env example, and README
@@ -23,7 +23,7 @@ kits/
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/    .gitignore and licence (the skeleton's .env.example already has database settings)
-    Guestbook/
+    Guestbook/  the guestbook site's content model
     Twig/
     Headless/
     Nuxt/
