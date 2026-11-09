@@ -72,11 +72,11 @@ jobs:
           php artisan build ${{ matrix.kit }}
 
       - name: Install Composer Dependencies
-        working-directory: build
+        working-directory: build/${{ matrix.root }}
         run: composer install --no-interaction --prefer-dist
 
       - name: Install Craft
-        working-directory: build
+        working-directory: build/${{ matrix.root }}
         run: |
           # Write settings into .env: PHP's built-in server doesn't pass the process environment on.
           set_env() { grep -q "^$1=" .env && sed -i "s|^$1=.*|$1=$2|" .env || echo "$1=$2" >> .env; }
@@ -91,6 +91,7 @@ jobs:
             set_env CRAFT_DB_PASSWORD craft
             set_env CRAFT_SECURITY_KEY ci
             set_env PRIMARY_SITE_URL http://127.0.0.1:8000
+            set_env CRAFT_BASE_CP_URL http://127.0.0.1:8000
             php craft install --interactive=0 --username=admin --email=admin@example.com --password=password
             php -S 127.0.0.1:8000 -t web web/index.php &
           else
@@ -111,7 +112,23 @@ jobs:
           # its schema version no longer matches the Craft version in composer.json.
           git diff --exit-code -- config/project config/craft/project
 
+      - uses: actions/setup-node@v5
+        if: hashFiles('build/frontend/package.json') != ''
+        with:
+          node-version: '22'
+
+      - name: Build Frontend
+        if: hashFiles('build/frontend/package.json') != ''
+        working-directory: build/frontend
+        run: |
+          npm ci
+          npm run build
+
       - name: Smoke Test
         run: |
           sleep 3
-          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8000/
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8000/admin/login
+          # Headless kits serve their front end from frontend/, not from Craft.
+          if [ -z "${{ matrix.root }}" ]; then
+            curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8000/
+          fi

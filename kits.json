@@ -23,6 +23,17 @@
             "layers": ["Craft6/Blank", "Craft6/Starter", "Craft6/Twig"],
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
+        },
+        "nuxt": {
+            "name": "Nuxt (Craft 5)",
+            "craft": 5,
+            "layers": [
+                { "layer": "Craft5/Blank", "into": "backend" },
+                { "layer": "Craft5/Headless", "into": "backend" },
+                "Craft5/Nuxt"
+            ],
+            "repository": "craftcms/starter-nuxt",
+            "branch": "5.x"
         }
     }
 }

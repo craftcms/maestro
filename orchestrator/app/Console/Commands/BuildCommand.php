@@ -29,10 +29,12 @@ class BuildCommand extends Command
         File::deleteDirectory($build);
         File::ensureDirectoryExists($build);
 
-        foreach ($kit['layers'] as $layer) {
-            info("Copying {$layer}...");
+        foreach ($maestro->layers($handle) as $mount) {
+            $target = rtrim("{$build}/{$mount['into']}", '/');
+            info("Copying {$mount['layer']}".($mount['into'] !== '' ? " into {$mount['into']}/" : '').'...');
+            File::ensureDirectoryExists($target);
             // cp -a keeps file modes, so executables like ./craft stay executable.
-            Process::run(['cp', '-a', $maestro->kitsPath($layer).'/.', $build])->throw();
+            Process::run(['cp', '-a', $maestro->kitsPath($mount['layer']).'/.', $target])->throw();
         }
 
         // Snapshot the build in its own Git repository, so `sync` can find

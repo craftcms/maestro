@@ -27,21 +27,23 @@ class SyncCommand extends Command
             return self::FAILURE;
         }
 
-        $layers = $maestro->kit(trim(File::get("{$build}/.git/maestro-kit")))['layers'];
+        $mounts = $maestro->layers(trim(File::get("{$build}/.git/maestro-kit")));
         // Skeleton layers mirror craftcms/craft, so edits never land in them.
-        $editable = array_values(array_filter($layers, fn (string $layer) => ! $maestro->isSkeleton($layer)));
-        $newFileLayer = $this->option('layer') ?? end($editable);
+        $editable = array_values(array_filter($mounts, fn (array $mount) => ! $maestro->isSkeleton($mount['layer'])));
 
-        if (! in_array($newFileLayer, $editable, true)) {
-            error("[{$newFileLayer}] is not an editable layer of this kit.");
+        if (($layer = $this->option('layer')) && ! in_array($layer, array_column($editable, 'layer'), true)) {
+            error("[{$layer}] is not an editable layer of this kit.");
 
             return self::FAILURE;
         }
 
-        $owner = function (string $path) use ($maestro, $editable): ?string {
-            foreach (array_reverse($editable) as $layer) {
-                if (File::exists($maestro->kitsPath("{$layer}/{$path}"))) {
-                    return $layer;
+        // The most specific editable layer that has this path, and the path inside it.
+        $owner = function (string $path, array $mounts) use ($maestro): ?array {
+            foreach (array_reverse($mounts) as $mount) {
+                $source = $maestro->layerPath($mount, $path);
+
+                if ($source !== null && File::exists($source)) {
+                    return [$mount['layer'], $source];
                 }
             }
 
@@ -50,14 +52,24 @@ class SyncCommand extends Command
 
         // A new file joins the most specific layer that already has its directory,
         // so e.g. new project config YAML lands next to the existing project config.
-        $directoryOwner = function (string $path) use ($owner, $newFileLayer): string {
-            for ($dir = dirname($path); $dir !== '.'; $dir = dirname($dir)) {
-                if ($layer = $owner($dir)) {
-                    return $layer;
+        $newFileOwner = function (string $path) use ($maestro, $editable): ?array {
+            $candidates = $this->option('layer')
+                ? array_filter($editable, fn (array $mount) => $mount['layer'] === $this->option('layer'))
+                : $editable;
+
+            for ($dir = dirname($path); ; $dir = dirname($dir)) {
+                foreach (array_reverse($candidates) as $mount) {
+                    $source = $maestro->layerPath($mount, $dir === '.' ? '' : $dir);
+
+                    if ($source !== null && ($dir === '.' || File::isDirectory($source))) {
+                        return [$mount['layer'], $maestro->layerPath($mount, $path)];
+                    }
+                }
+
+                if ($dir === '.') {
+                    return null;
                 }
             }
-
-            return $newFileLayer;
         };
 
         $changes = Process::path($build)->run('git status --porcelain=v1 -z --untracked-files=all --no-renames')->throw()->output();
@@ -67,24 +79,30 @@ class SyncCommand extends Command
             $path = substr($entry, 3);
 
             if (str_contains($status, 'D')) {
-                if ($layer = $owner($path)) {
-                    File::delete($maestro->kitsPath("{$layer}/{$path}"));
+                if ([$layer, $source] = $owner($path, $editable)) {
+                    File::delete($source);
                     info("Deleted {$path} from {$layer}");
 
-                    for ($dir = dirname($path); $dir !== '.' && File::isEmptyDirectory($maestro->kitsPath("{$layer}/{$dir}")); $dir = dirname($dir)) {
-                        File::deleteDirectory($maestro->kitsPath("{$layer}/{$dir}"));
+                    for ($dir = dirname($source); $dir !== $maestro->kitsPath($layer) && File::isEmptyDirectory($dir); $dir = dirname($dir)) {
+                        File::deleteDirectory($dir);
                     }
                 }
 
-                if ($fallback = collect($layers)->reverse()->first(fn ($l) => File::exists($maestro->kitsPath("{$l}/{$path}")))) {
+                if ([$fallback] = $owner($path, $mounts)) {
                     warning("{$path} still comes from {$fallback} and will return on the next build.");
                 }
 
                 continue;
             }
 
-            $layer = $owner($path) ?? ($this->option('layer') ?? $directoryOwner($path));
-            $target = $maestro->kitsPath("{$layer}/{$path}");
+            [$layer, $target] = $owner($path, $editable) ?? $newFileOwner($path) ?? [null, null];
+
+            if ($layer === null) {
+                warning("Skipped {$path}: no editable layer is mounted above it.");
+
+                continue;
+            }
+
             File::ensureDirectoryExists(dirname($target));
             Process::run(['cp', '-p', "{$build}/{$path}", $target])->throw();
             info("Synced {$path} to {$layer}");

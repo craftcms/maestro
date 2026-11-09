@@ -14,6 +14,8 @@ kits/
     Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
     Starter/    what every Craft 5 starter shares: content model, templates, DDEV, Cloud
     Twig/       what only starter-twig adds
+    Headless/   the Craft backend headless kits share: headless mode, GraphQL, content model
+    Nuxt/       starter-nuxt's frontend/, DDEV config, and README
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/
@@ -24,8 +26,19 @@ kits/
 | --- | --- | --- |
 | `twig` | Craft5/Blank → Craft5/Starter → Craft5/Twig | `craftcms/starter-twig@5.x` |
 | `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Twig | `craftcms/starter-twig@6.x` |
+| `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 
 Put a file in the lowest layer that every kit needing it shares. To add a kit, add its layer folder and an entry in `kits.json`.
+
+A layer can be copied into a subfolder instead of the build root, the way headless kits keep Craft in `backend/`:
+
+```json
+"layers": [
+    { "layer": "Craft5/Blank", "into": "backend" },
+    { "layer": "Craft5/Headless", "into": "backend" },
+    "Craft5/Nuxt"
+]
+```
 
 ## Working on a kit
 
@@ -58,7 +71,7 @@ The Tests workflow fails when a kit's project config doesn't match its Craft ver
 
 ## Automation
 
-- **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, and requests the home page.
+- **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, builds the frontend if the kit has one, and requests the control panel login page (plus the home page for non-headless kits).
 - **Build and Push Kit Changes** builds every kit on `main` and pushes the result to the kit's repository and branch. It needs a `STARTER_KIT_TOKEN` secret that can push to those repositories.
 - **Sync Craft Skeleton** opens a weekly pull request that refreshes the `*/Blank` layers from `craftcms/craft`.
 

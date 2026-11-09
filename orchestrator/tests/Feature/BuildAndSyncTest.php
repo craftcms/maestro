@@ -15,6 +15,8 @@ beforeEach(function () {
         'Base/Starter/templates/_layout.twig' => 'starter',
         'Base/Starter/config/project/project.yaml' => 'starter',
         'Base/Kit/composer.json' => 'kit',
+        'Base/Headless/config/general.php' => 'headless',
+        'Base/Frontend/frontend/package.json' => 'frontend',
     ];
 
     foreach ($files as $path => $contents) {
@@ -29,6 +31,13 @@ beforeEach(function () {
         'kits' => ['demo' => [
             'name' => 'Demo', 'craft' => 5, 'repository' => 'craftcms/starter-demo', 'branch' => 'main',
             'layers' => ['Base/Blank', 'Base/Starter', 'Base/Kit'],
+        ], 'headless' => [
+            'name' => 'Headless', 'craft' => 5, 'repository' => 'craftcms/starter-headless', 'branch' => 'main',
+            'layers' => [
+                ['layer' => 'Base/Blank', 'into' => 'backend'],
+                ['layer' => 'Base/Headless', 'into' => 'backend'],
+                'Base/Frontend',
+            ],
         ]],
     ]));
 
@@ -74,4 +83,30 @@ test('sync writes build changes to the owning layer and never to the skeleton', 
     File::put("{$kits}/Base/Kit/README.md", 'changed in kits/');
     $this->artisan('sync')->assertSuccessful();
     expect(File::get("{$kits}/Base/Kit/README.md"))->toBe('changed in kits/');
+});
+
+test('layers mounted into a subfolder build there and sync back to the same layer', function () {
+    $this->artisan('build', ['kit' => 'headless'])->assertSuccessful();
+
+    $build = "{$this->root}/build";
+    $kits = "{$this->root}/kits";
+    expect(File::get("{$build}/backend/config/general.php"))->toBe('headless')
+        ->and(File::get("{$build}/backend/composer.json"))->toBe('skeleton')
+        ->and(File::get("{$build}/frontend/package.json"))->toBe('frontend')
+        ->and(File::exists("{$build}/composer.json"))->toBeFalse();
+
+    File::put("{$build}/backend/config/general.php", 'edited');      // owned by Headless
+    File::put("{$build}/backend/composer.json", 'edited');           // only in the skeleton
+    File::ensureDirectoryExists("{$build}/backend/modules");
+    File::put("{$build}/backend/modules/Module.php", 'new');         // new, inside backend/
+    File::put("{$build}/frontend/app.vue", 'new');                   // new, next to the frontend
+
+    $this->artisan('sync')->assertSuccessful();
+
+    expect(File::get("{$kits}/Base/Headless/config/general.php"))->toBe('edited')
+        ->and(File::get("{$kits}/Base/Blank/composer.json"))->toBe('skeleton')
+        ->and(File::get("{$kits}/Base/Headless/composer.json"))->toBe('edited')
+        ->and(File::get("{$kits}/Base/Headless/modules/Module.php"))->toBe('new')
+        ->and(File::get("{$kits}/Base/Frontend/frontend/app.vue"))->toBe('new')
+        ->and(File::exists("{$kits}/Base/Frontend/backend"))->toBeFalse();
 });

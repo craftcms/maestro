@@ -19,6 +19,8 @@ class MatrixCommand extends Command
             'repository' => $kit['repository'],
             'branch' => $kit['branch'],
             'craft' => $kit['craft'],
+            // Where the Craft project sits in the build: the folder its skeleton layer is copied into.
+            'root' => $maestro->layers($handle)[0]['into'],
         ])->values()));
 
         return self::SUCCESS;
