@@ -1,0 +1,9 @@
+baseUrl: $PRIMARY_SITE_URL
+enabled: true
+handle: default
+hasUrls: true
+language: en-US
+name: 'Wordpress Starter'
+primary: true
+siteGroup: 0ff5ed7e-a51c-4d65-82bc-8a9b37bea3c8 # Wordpress Starter
+sortOrder: 1

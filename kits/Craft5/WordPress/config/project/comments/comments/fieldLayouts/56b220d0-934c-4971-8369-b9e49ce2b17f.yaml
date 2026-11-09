@@ -1,0 +1,18 @@
+tabs:
+  -
+    elementCondition: null
+    elements:
+      -
+        dateAdded: '2024-11-12T07:37:06+00:00'
+        elementCondition: null
+        instructions: null
+        label: __blank__
+        required: true
+        tip: null
+        type: verbb\comments\fieldlayoutelements\CommentsField
+        uid: a12964f8-7513-4766-9075-058fe250e15e
+        userCondition: null
+        warning: null
+    name: 'Comment Form'
+    uid: a1534220-1fed-4239-b8bd-4cd7fa06d077
+    userCondition: null

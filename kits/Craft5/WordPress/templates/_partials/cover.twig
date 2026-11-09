@@ -1,0 +1,26 @@
+{% set showMeta = showMeta ?? false %}
+{% set title = title ?? entry.title ?? category.title ?? null %}
+{% set category = entry.categories.eagerly().one() ?? null %}
+{% set tags = entry.tags.eagerly().all() ?? null %}
+
+<header class="container mx-auto pt-12 pb-6 px-2 text-2xl">
+  <h1 class="font-bold text-4xl sm:text-6xl lg:text-9xl">{{ title }}</h1>
+  {% if showMeta %}
+    <div class="text-xs mt-4 flex gap-2">
+      <div class="grow">
+        <p>{% if category %}<a href="{{ category.url }}" class="font-bold text-red-600 hover:text-red-800 hover:underline">{{ category.title }}</a> | {% endif %}<time datetime="{{ entry.postDate|atom }}">{{ entry.postDate|date }}</time></p>
+        {% if entry.author.fullName %}<p>By {{ entry.author.fullName }}</p>{% endif %}
+      </div>
+      {% if tags %}
+        <aside class="">
+          <h3 class="font-bold">Tagged</h3>
+          <ul>
+          {% for tag in tags %}
+            <li class="inline-block">{{ tag.title }}{% if not loop.last %},{% endif %}</li>
+          {% endfor %}
+          </ul>
+        </aside>
+      {% endif %}
+    </div>
+  {% endif %}
+</header>

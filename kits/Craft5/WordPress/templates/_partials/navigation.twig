@@ -1,0 +1,9 @@
+  {% set pages = craft.entries.section('pages').level(1).slug('not homepage').all() %}
+  <nav class="sm:tw-basis-2/3 grow-1" aria-label="Primary">
+    <ul class="sm:flex">
+      {% for page in pages %}
+        <li><a href="{{ page.url }}" class="block p-2 hover:underline hover:text-red-600{% if segment1 == page.slug %} text-red-600" aria-current="page{% endif %}">{{ page.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  

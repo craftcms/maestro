@@ -1,0 +1,10 @@
+{% include [
+  'pages/' ~ entry.template, 
+  'pages/' ~ entry.section.handle ~ '/' ~ entry.slug,
+  'pages/' ~ entry.section.handle ~ '/' ~ entry.type.handle,
+  'pages/' ~ entry.section.handle ~ '/default',
+  'pages/' ~ entry.slug,
+  'pages/' ~ entry.type.handle,
+  'pages/' ~ entry.section.handle,
+  'pages/default'
+] %}

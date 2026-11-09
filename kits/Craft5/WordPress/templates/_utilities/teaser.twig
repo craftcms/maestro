@@ -1,0 +1,20 @@
+{% macro teaser(data) %}
+  {% import '_utilities/image' as img %}
+  <article class="py-6">
+    {% if data.featuredImage %}
+      <figure class="image-block my-12">
+        {% set assets = data.featuredImage.eagerly().all() %}
+        <a href="{{ data.url }}">
+          {{ img.pictures(assets) }}
+        </a>
+      </figure>
+    {% endif %}
+    <h2 class="text-4xl font-bold"><a href="{{ data.url }}" class="text-red-600 hover:undeline focus:underline cursor-pointer">{{ data.title }}</a></h2>
+    {% if data.excerpt %}
+      <p>{{ data.excerpt }}</p>
+    {% endif %}
+    <p>
+      <time class="text-sm" datetime="{{ data.postDate|atom }}">{{ data.postDate|date }}</time>
+    </p>
+  </article>
+{% endmacro %}

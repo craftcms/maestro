@@ -1,0 +1,22 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 23a3f2f7-2b22-4a38-835a-342440a6a2ce # Home
+handle: home
+maxAuthors: 1
+minAuthors: 1
+name: Home
+previewTargets:
+  -
+    label: 'Primary entry page'
+    refresh: '1'
+    urlFormat: '{url}'
+propagationMethod: all
+siteSettings:
+  37938585-7d7b-4d97-94f7-73dc07d795c2: # Wordpress Starter
+    enabledByDefault: true
+    hasUrls: true
+    template: index.twig
+    uriFormat: __home__
+type: single

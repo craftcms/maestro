@@ -24,6 +24,13 @@
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
         },
+        "wordpress": {
+            "name": "WordPress (Craft 5)",
+            "craft": 5,
+            "layers": ["Craft5/Blank", "Craft5/Starter", "Craft5/WordPress"],
+            "repository": "craftcms/starter-wordpress",
+            "branch": "5.x"
+        },
         "nuxt": {
             "name": "Nuxt (Craft 5)",
             "craft": 5,

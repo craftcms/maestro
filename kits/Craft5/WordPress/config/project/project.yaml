@@ -1,0 +1,118 @@
+dateModified: 1794221315
+email:
+  fromEmail: travis@pixelandtonic.com
+  fromName: travis@pixelandtonic.com
+  replyToEmail: null
+  template: null
+  transportSettings:
+    command: '/usr/local/bin/mailpit sendmail -t --smtp-addr 127.0.0.1:1025'
+  transportType: craft\mail\transportadapters\Sendmail
+fs:
+  uploads:
+    hasUrls: true
+    name: Uploads
+    settings:
+      path: '@webroot/uploads'
+    type: craft\fs\Local
+    url: /uploads
+meta:
+  __names__:
+    0ff5ed7e-a51c-4d65-82bc-8a9b37bea3c8: 'Wordpress Starter' # Wordpress Starter
+    08a529f2-1255-4bc6-9680-ec89d97b23fa: 'Public Schema' # Public Schema
+    23a3f2f7-2b22-4a38-835a-342440a6a2ce: Home # Home
+    936d7cd3-b422-4bc9-80dd-63bdfeb5ca47: Home # Home
+    37938585-7d7b-4d97-94f7-73dc07d795c2: 'Wordpress Starter' # Wordpress Starter
+    c55ca0a9-4bd6-409b-afd8-c1884dafecd0: Team # Team
+plugins:
+  ckeditor:
+    edition: standard
+    enabled: true
+    schemaVersion: 3.0.0.0
+  comments:
+    edition: standard
+    enabled: true
+    licenseKey: GTB6N9BJ9LJ9MWDKLCZUPN45
+    schemaVersion: 1.2.2
+    settings:
+      allowFlagging: true
+      allowGuest: false
+      allowGuestFlagging: false
+      allowGuestVoting: false
+      allowVoting: true
+      autoCloseDays: null
+      closed: false
+      defaultQueryStatus:
+        - approved
+      downvoteCommentLimit: 5
+      enableGravatar: false
+      enableSpamChecks: true
+      flaggedCommentLimit: 5
+      guestNotice: null
+      guestRequireEmailName: true
+      guestShowEmailName: true
+      hideVotingForThreshold: false
+      indexSidebarGroup: true
+      indexSidebarIndividualElements: false
+      indexSidebarLimit: 25
+      maxReplyDepth: null
+      maxUserComments: null
+      moderatorExcluded: true
+      moderatorUserGroup: null
+      notificationAdminEnabled: false
+      notificationAuthorEnabled: true
+      notificationFlaggedEnabled: false
+      notificationModeratorApprovedEnabled: false
+      notificationModeratorEditEnabled: false
+      notificationModeratorEnabled: false
+      notificationReplyEnabled: true
+      notificationSubscribeAuto: false
+      notificationSubscribeCommentEnabled: false
+      notificationSubscribeDefault: true
+      notificationSubscribeEnabled: false
+      orderBy: desc
+      outputDefaultCss: true
+      outputDefaultJs: true
+      permissions:
+        __assoc__:
+          -
+            - craft\elements\Asset
+            - '*'
+          -
+            - craft\elements\Category
+            - '*'
+          -
+            - craft\elements\Entry
+            - '*'
+          -
+            - craft\elements\User
+            - '*'
+      placeholderAvatar: null
+      pluginName: Comments
+      recaptchaEnabled: false
+      recaptchaKey: null
+      recaptchaMinScore: 0.5
+      recaptchaSecret: null
+      requireModeration: true
+      securityBanned: null
+      securityFlooding: null
+      securityMatchExact: false
+      securityMaxLength: null
+      securityModeration: null
+      securitySpamlist: null
+      showAvatar: true
+      showCustomFieldInstructions: false
+      showCustomFieldNames: false
+      showTimeAgo: true
+      sortDefaultDirection: asc
+      sortDefaultKey: structure
+      structureUid: 8487d65a-a2c4-4395-bebd-987bc761fa11
+      templateEmail: null
+      templateFolderOverride: null
+      useQueueForNotifications: false
+system:
+  edition: team
+  live: true
+  name: 'Wordpress Starter'
+  retryDuration: null
+  schemaVersion: 5.12.0.1
+  timeZone: America/Los_Angeles

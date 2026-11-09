@@ -1,0 +1,26 @@
+{% extends "pages/default" %}
+{% import '_utilities/teaser' as post %}
+{% set postQuery = craft.entries
+  .section('posts')
+  .orderBy('sticky DESC, postDate DESC')
+  .limit(10) %}
+{% paginate postQuery as pageInfo, posts %}
+
+{% block title %}
+  {{ parent() }}
+  {%- if pageInfo.currentPage > 1 -%}
+    {%- if pageInfo.getPrevUrl() or pageInfo.getNextUrl() %}, Page {{ pageInfo.currentPage }} of {{ pageInfo.totalPages }}
+    {% endif %}
+  {%- endif -%}
+{% endblock %}
+
+{% block landing %}
+  <section class="container mx-auto mb-6 px-2 divide-y divide-slate-300">
+    {% for post in posts %}
+      {{ post.teaser(post) }}
+    {% else %}
+      <p>No posts, yet!</p>
+    {% endfor %}
+    {% include '_partials/pagination' with { pageInfo: pageInfo } %}
+  </section>
+{% endblock %}
