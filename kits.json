@@ -6,7 +6,8 @@
         },
         "Craft6/Blank": {
             "repository": "craftcms/craft",
-            "ref": "6.x"
+            "ref": "6.x",
+            "exclude": ["resources/views/index.twig"]
         }
     },
     "kits": {

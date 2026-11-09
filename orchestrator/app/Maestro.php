@@ -89,7 +89,7 @@ class Maestro
     }
 
     /**
-     * @return array<string, array{repository: string, ref: string}>
+     * @return array<string, array{repository: string, ref: string, exclude?: list<string>}>
      */
     public function skeletons(): array
     {

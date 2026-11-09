@@ -94,6 +94,7 @@ php artisan sync           # copy your edits back into kits/
 - A changed or deleted file goes to the most specific layer that has it.
 - A new file goes to the most specific layer that already has its directory, or to `--layer=`.
 - Skeleton layers are never written; changing a skeleton file creates an override in a layer above it.
+- Deleting a file only the skeleton has doesn't stick, because it comes back on the next build. To drop a skeleton file from every kit, list it under `exclude` for that skeleton in `kits.json` and run `php artisan skeleton:sync`. The Craft 6 skeleton excludes `resources/views/index.twig`, Craft's welcome page, which no starter serves.
 - A merged `.env` file syncs key by key. A changed key goes to the most specific layer that sets it, or to the layer that owns the file if only the skeleton sets it. A new key goes to the layer that owns the file. A deleted key is removed from every layer that sets it; a key only the skeleton sets comes back on the next build. Moved keys and comments that aren't directly above a key can't be synced, so `sync` warns about them.
 
 Review `git status` before committing. Files Craft generates during install, such as `config/license.key`, will show up too.

@@ -34,8 +34,12 @@ class SkeletonSyncCommand extends Command
                 "https://github.com/{$skeleton['repository']}.git", $checkout,
             ])->throw();
 
-            foreach (self::EXCLUDE as $path) {
-                File::deleteDirectory("{$checkout}/{$path}");
+            // Also drop files the skeleton lists under "exclude", such as Craft's
+            // welcome template, which no starter serves.
+            foreach ([...self::EXCLUDE, ...$skeleton['exclude'] ?? []] as $path) {
+                File::isDirectory("{$checkout}/{$path}")
+                    ? File::deleteDirectory("{$checkout}/{$path}")
+                    : File::delete("{$checkout}/{$path}");
             }
 
             $target = $maestro->kitsPath($layer);
