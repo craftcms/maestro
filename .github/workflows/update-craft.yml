@@ -1,0 +1,59 @@
+name: Update Craft
+
+on:
+  schedule:
+    - cron: '0 9 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Craft ${{ matrix.craft }}
+    runs-on: ubuntu-latest
+    strategy:
+      # A broken Craft 6 alpha shouldn't hold back the Craft 5 update, or the other way round.
+      fail-fast: false
+      matrix:
+        craft: [5, 6]
+
+    # craft:update installs each kit here before updating it.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: craft
+          POSTGRES_PASSWORD: craft
+          POSTGRES_DB: craft
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.craft == 6 && '8.5' || '8.4' }}
+          extensions: pdo_pgsql, intl, gd, zip, bcmath
+          coverage: none
+
+      - name: Update Craft ${{ matrix.craft }}
+        working-directory: orchestrator
+        run: |
+          composer install --no-interaction --prefer-dist
+          php artisan craft:update ${{ matrix.craft }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/update-craft-${{ matrix.craft }}
+          title: Update the Craft ${{ matrix.craft }} kits
+          commit-message: Update the Craft ${{ matrix.craft }} kits
+          body: |
+            Runs `php artisan craft:update ${{ matrix.craft }}`, which installs each Craft ${{ matrix.craft }} kit on its locked version, runs `composer update` within the current constraints and `craft up`, and syncs the new `composer.lock` and project config back.
+
+            The Tests workflow builds and installs every kit on top of these changes.
+          add-paths: kits
