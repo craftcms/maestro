@@ -127,6 +127,7 @@ test('layers mounted into a subfolder build there and sync back to the same laye
     File::ensureDirectoryExists("{$build}/backend/modules");
     File::put("{$build}/backend/modules/Module.php", 'new');         // new, inside backend/
     File::put("{$build}/frontend/app.vue", 'new');                   // new, next to the frontend
+    File::put("{$build}/frontend/package-lock.json", '{}');          // written by npm install, never shipped
 
     $this->artisan('sync')->assertSuccessful();
 
@@ -135,7 +136,8 @@ test('layers mounted into a subfolder build there and sync back to the same laye
         ->and(File::get("{$kits}/Base/Headless/composer.json"))->toBe('edited')
         ->and(File::get("{$kits}/Base/Headless/modules/Module.php"))->toBe('new')
         ->and(File::get("{$kits}/Base/Frontend/frontend/app.vue"))->toBe('new')
-        ->and(File::exists("{$kits}/Base/Frontend/backend"))->toBeFalse();
+        ->and(File::exists("{$kits}/Base/Frontend/backend"))->toBeFalse()
+        ->and(File::exists("{$kits}/Base/Frontend/frontend/package-lock.json"))->toBeFalse();
 });
 
 test('build merges .env files across layers', function () {
