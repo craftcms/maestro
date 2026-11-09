@@ -7,17 +7,17 @@ beforeEach(function () {
     $this->root = sys_get_temp_dir().'/maestro-test-'.uniqid();
 
     $files = [
-        'Base/Blank/composer.json' => 'skeleton',
-        'Base/Blank/craft' => 'skeleton',
-        'Base/Blank/config/general.php' => 'skeleton',
-        'Base/Blank/templates/index.twig' => 'skeleton',
-        'Base/Starter/templates/index.twig' => 'starter',
-        'Base/Starter/templates/_layout.twig' => 'starter',
-        'Base/Starter/config/project/project.yaml' => 'starter',
-        'Base/Kit/composer.json' => 'kit',
-        'Base/Headless/config/general.php' => 'headless',
-        'Base/Frontend/frontend/package.json' => 'frontend',
-        'Base/Starter/.ddev/config.yaml' => <<<'YAML'
+        'Craft5/Skeleton/composer.json' => 'skeleton',
+        'Craft5/Skeleton/craft' => 'skeleton',
+        'Craft5/Skeleton/config/general.php' => 'skeleton',
+        'Craft5/Skeleton/templates/index.twig' => 'skeleton',
+        'Craft5/Base/templates/index.twig' => 'starter',
+        'Craft5/Base/templates/_layout.twig' => 'starter',
+        'Craft5/Base/config/project/project.yaml' => 'starter',
+        'Craft5/Kit/composer.json' => 'kit',
+        'Craft5/Headless/config/general.php' => 'headless',
+        'Frontend/Nuxt/frontend/package.json' => 'frontend',
+        'Craft5/Base/.ddev/config.yaml' => <<<'YAML'
             name: craft
             php_version: "8.5"
             database:
@@ -26,14 +26,14 @@ beforeEach(function () {
             web_environment: []
 
             YAML,
-        'Base/Kit/.ddev/config.yaml' => <<<'YAML'
+        'Craft5/Kit/.ddev/config.yaml' => <<<'YAML'
             name: demo
             database:
                 type: postgres
                 version: "17"
 
             YAML,
-        'Base/Blank/.env.example' => <<<'ENV'
+        'Craft5/Skeleton/.env.example' => <<<'ENV'
             # Header from the skeleton
 
             # App name
@@ -44,7 +44,7 @@ beforeEach(function () {
             DB_PORT=5432
 
             ENV,
-        'Base/Starter/.env.example' => <<<'ENV'
+        'Craft5/Base/.env.example' => <<<'ENV'
             # The starter's name
             APP_NAME=Starter
 
@@ -53,7 +53,7 @@ beforeEach(function () {
             MAIL_PORT=25
 
             ENV,
-        'Base/Kit/.env.example' => <<<'ENV'
+        'Craft5/Kit/.env.example' => <<<'ENV'
             # Only for the demo kit
 
             APP_NAME=Demo
@@ -67,19 +67,19 @@ beforeEach(function () {
         File::put("{$this->root}/kits/{$path}", $contents);
     }
 
-    chmod("{$this->root}/kits/Base/Blank/craft", 0755);
+    chmod("{$this->root}/kits/Craft5/Skeleton/craft", 0755);
 
     File::put("{$this->root}/kits.json", json_encode([
-        'skeletons' => ['Base/Blank' => ['repository' => 'craftcms/craft', 'ref' => '5.x']],
+        'skeletons' => ['Craft5/Skeleton' => ['repository' => 'craftcms/craft', 'ref' => '5.x']],
         'kits' => ['demo' => [
             'name' => 'Demo', 'craft' => 5, 'repository' => 'craftcms/starter-demo', 'branch' => 'main',
-            'layers' => ['Base/Blank', 'Base/Starter', 'Base/Kit'],
+            'layers' => ['Craft5/Skeleton', 'Craft5/Base', 'Craft5/Kit'],
         ], 'headless' => [
             'name' => 'Headless', 'craft' => 5, 'repository' => 'craftcms/starter-headless', 'branch' => 'main',
             'layers' => [
-                ['layer' => 'Base/Blank', 'into' => 'backend'],
-                ['layer' => 'Base/Headless', 'into' => 'backend'],
-                'Base/Frontend',
+                ['layer' => 'Craft5/Skeleton', 'into' => 'backend'],
+                ['layer' => 'Craft5/Headless', 'into' => 'backend'],
+                'Frontend/Nuxt',
             ],
         ]],
     ]));
@@ -105,27 +105,27 @@ test('sync writes build changes to the owning layer and never to the skeleton', 
     $build = "{$this->root}/build";
     $kits = "{$this->root}/kits";
     File::put("{$build}/composer.json", 'edited');                  // owned by Kit
-    File::put("{$build}/templates/index.twig", 'edited');           // owned by Starter, also in Blank
-    File::put("{$build}/config/general.php", 'edited');             // only in the skeleton, Starter has config/
-    File::put("{$build}/config/project/sections.yaml", 'new');      // new, next to Starter's project config
+    File::put("{$build}/templates/index.twig", 'edited');           // owned by Base, also in Skeleton
+    File::put("{$build}/config/general.php", 'edited');             // only in the skeleton, Base has config/
+    File::put("{$build}/config/project/sections.yaml", 'new');      // new, next to Base's project config
     File::put("{$build}/README.md", 'new');                         // new, at the root
-    File::delete("{$build}/templates/_layout.twig");                // owned by Starter
+    File::delete("{$build}/templates/_layout.twig");                // owned by Base
 
     $this->artisan('sync')->assertSuccessful();
 
-    expect(File::get("{$kits}/Base/Kit/composer.json"))->toBe('edited')
-        ->and(File::get("{$kits}/Base/Starter/templates/index.twig"))->toBe('edited')
-        ->and(File::get("{$kits}/Base/Blank/templates/index.twig"))->toBe('skeleton')
-        ->and(File::get("{$kits}/Base/Blank/config/general.php"))->toBe('skeleton')
-        ->and(File::get("{$kits}/Base/Starter/config/general.php"))->toBe('edited')
-        ->and(File::get("{$kits}/Base/Starter/config/project/sections.yaml"))->toBe('new')
-        ->and(File::get("{$kits}/Base/Kit/README.md"))->toBe('new')
-        ->and(File::exists("{$kits}/Base/Starter/templates/_layout.twig"))->toBeFalse();
+    expect(File::get("{$kits}/Craft5/Kit/composer.json"))->toBe('edited')
+        ->and(File::get("{$kits}/Craft5/Base/templates/index.twig"))->toBe('edited')
+        ->and(File::get("{$kits}/Craft5/Skeleton/templates/index.twig"))->toBe('skeleton')
+        ->and(File::get("{$kits}/Craft5/Skeleton/config/general.php"))->toBe('skeleton')
+        ->and(File::get("{$kits}/Craft5/Base/config/general.php"))->toBe('edited')
+        ->and(File::get("{$kits}/Craft5/Base/config/project/sections.yaml"))->toBe('new')
+        ->and(File::get("{$kits}/Craft5/Kit/README.md"))->toBe('new')
+        ->and(File::exists("{$kits}/Craft5/Base/templates/_layout.twig"))->toBeFalse();
 
     // A second sync only sees changes made since the first one.
-    File::put("{$kits}/Base/Kit/README.md", 'changed in kits/');
+    File::put("{$kits}/Craft5/Kit/README.md", 'changed in kits/');
     $this->artisan('sync')->assertSuccessful();
-    expect(File::get("{$kits}/Base/Kit/README.md"))->toBe('changed in kits/');
+    expect(File::get("{$kits}/Craft5/Kit/README.md"))->toBe('changed in kits/');
 });
 
 test('layers mounted into a subfolder build there and sync back to the same layer', function () {
@@ -147,13 +147,13 @@ test('layers mounted into a subfolder build there and sync back to the same laye
 
     $this->artisan('sync')->assertSuccessful();
 
-    expect(File::get("{$kits}/Base/Headless/config/general.php"))->toBe('edited')
-        ->and(File::get("{$kits}/Base/Blank/composer.json"))->toBe('skeleton')
-        ->and(File::get("{$kits}/Base/Headless/composer.json"))->toBe('edited')
-        ->and(File::get("{$kits}/Base/Headless/modules/Module.php"))->toBe('new')
-        ->and(File::get("{$kits}/Base/Frontend/frontend/app.vue"))->toBe('new')
-        ->and(File::exists("{$kits}/Base/Frontend/backend"))->toBeFalse()
-        ->and(File::exists("{$kits}/Base/Frontend/frontend/package-lock.json"))->toBeFalse();
+    expect(File::get("{$kits}/Craft5/Headless/config/general.php"))->toBe('edited')
+        ->and(File::get("{$kits}/Craft5/Skeleton/composer.json"))->toBe('skeleton')
+        ->and(File::get("{$kits}/Craft5/Headless/composer.json"))->toBe('edited')
+        ->and(File::get("{$kits}/Craft5/Headless/modules/Module.php"))->toBe('new')
+        ->and(File::get("{$kits}/Frontend/Nuxt/frontend/app.vue"))->toBe('new')
+        ->and(File::exists("{$kits}/Frontend/Nuxt/backend"))->toBeFalse()
+        ->and(File::exists("{$kits}/Frontend/Nuxt/frontend/package-lock.json"))->toBeFalse();
 });
 
 test('build merges .env files across layers', function () {
@@ -184,7 +184,7 @@ test('sync writes .env changes key by key to the layers that set them', function
     $env = "{$this->root}/build/.env.example";
     $kits = "{$this->root}/kits";
     $edited = str_replace(
-        ['APP_DEBUG=true', "MAIL_HOST=mail\n", 'MAIL_PORT=25'],     // skeleton key, Starter key, Starter key
+        ['APP_DEBUG=true', "MAIL_HOST=mail\n", 'MAIL_PORT=25'],     // skeleton key, Base key, Base key
         ['APP_DEBUG=false', '', 'MAIL_PORT=587'],
         File::get($env),
     )."\n# Queue\nQUEUE_CONNECTION=sync\n";                        // new key
@@ -192,7 +192,7 @@ test('sync writes .env changes key by key to the layers that set them', function
 
     $this->artisan('sync')->assertSuccessful();
 
-    expect(File::get("{$kits}/Base/Kit/.env.example"))->toBe(<<<'ENV'
+    expect(File::get("{$kits}/Craft5/Kit/.env.example"))->toBe(<<<'ENV'
         # Only for the demo kit
 
         APP_NAME=Demo
@@ -204,7 +204,7 @@ test('sync writes .env changes key by key to the layers that set them', function
         QUEUE_CONNECTION=sync
 
         ENV)
-        ->and(File::get("{$kits}/Base/Starter/.env.example"))->toBe(<<<'ENV'
+        ->and(File::get("{$kits}/Craft5/Base/.env.example"))->toBe(<<<'ENV'
         # The starter's name
         APP_NAME=Starter
 
@@ -220,14 +220,14 @@ test('sync writes .env changes key by key to the layers that set them', function
     // A key deleted from the skeleton's file can't be removed, so nothing changes.
     File::put($env, str_replace("DB_HOST=127.0.0.1\n", '', $edited));
     $this->artisan('sync')->assertSuccessful();
-    expect(File::get("{$kits}/Base/Blank/.env.example"))->toContain('DB_HOST=127.0.0.1')
-        ->and(File::get("{$kits}/Base/Kit/.env.example"))->not->toContain('DB_HOST');
+    expect(File::get("{$kits}/Craft5/Skeleton/.env.example"))->toContain('DB_HOST=127.0.0.1')
+        ->and(File::get("{$kits}/Craft5/Kit/.env.example"))->not->toContain('DB_HOST');
 
     // A file only the skeleton has gets an override holding just the changed key.
     $this->artisan('build', ['kit' => 'headless'])->assertSuccessful();
-    File::put("{$this->root}/build/backend/.env.example", str_replace('DB_PORT=5432', 'DB_PORT=3306', File::get("{$kits}/Base/Blank/.env.example")));
+    File::put("{$this->root}/build/backend/.env.example", str_replace('DB_PORT=5432', 'DB_PORT=3306', File::get("{$kits}/Craft5/Skeleton/.env.example")));
     $this->artisan('sync')->assertSuccessful();
-    expect(File::get("{$kits}/Base/Headless/.env.example"))->toBe("DB_PORT=3306\n");
+    expect(File::get("{$kits}/Craft5/Headless/.env.example"))->toBe("DB_PORT=3306\n");
 });
 
 test('build merges DDEV config by top-level key, and sync writes each key back to its layer', function () {
@@ -253,8 +253,8 @@ test('build merges DDEV config by top-level key, and sync writes each key back t
     ));
     $this->artisan('sync')->assertSuccessful();
 
-    // Both keys are set by Starter, so the Kit layer's override stays as it was.
-    expect(File::get("{$kits}/Base/Starter/.ddev/config.yaml"))->toBe(<<<'YAML'
+    // Both keys are set by Base, so the Kit layer's override stays as it was.
+    expect(File::get("{$kits}/Craft5/Base/.ddev/config.yaml"))->toBe(<<<'YAML'
         name: craft
         php_version: "8.4"
         database:
@@ -264,7 +264,7 @@ test('build merges DDEV config by top-level key, and sync writes each key back t
           - FOO=bar
 
         YAML)
-        ->and(File::get("{$kits}/Base/Kit/.ddev/config.yaml"))->toBe(<<<'YAML'
+        ->and(File::get("{$kits}/Craft5/Kit/.ddev/config.yaml"))->toBe(<<<'YAML'
         name: demo
         database:
             type: postgres

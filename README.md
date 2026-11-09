@@ -11,9 +11,9 @@ Forked from [laravel/maestro](https://github.com/laravel/maestro), which does th
 ```
 kits/
   Craft5/
-    Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
+    Skeleton/   mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
     DDEV/       the DDEV config every Craft 5 kit starts from: project type, PHP, database
-    Starter/    what every Craft 5 kit shares: Composer files and lock, database .env settings, .gitignore, licence
+    Base/       what every Craft 5 kit shares: Composer files and lock, database .env settings, .gitignore, licence
     Guestbook/  the guestbook site: content model, Cloud
     Twig/       starter-twig: Twig templates, DDEV project name, README
     WordPress/  starter-wordpress: WordPress-style content model, templates, its own Composer files for comments and wp-import, README
@@ -23,9 +23,9 @@ kits/
     Astro/      starter-astro's DDEV project name, backend .env example, and README
     Europa/     the Europa Museum demo: its own Composer files, content model, templates, front-end build, images and seed.sql
   Craft6/
-    Blank/      mirror of craftcms/craft@6.x
+    Skeleton/   mirror of craftcms/craft@6.x
     DDEV/       the DDEV config every Craft 6 kit starts from
-    Starter/    what every Craft 6 kit shares: Composer files and lock, .gitignore, licence (the skeleton's .env.example already has database settings)
+    Base/       what every Craft 6 kit shares: Composer files and lock, .gitignore, licence (the skeleton's .env.example already has database settings)
     Guestbook/  the guestbook site's content model, shared by Twig and Blade
     Twig/
     Blade/      starter-blade: the guestbook site in Blade templates, DDEV project name, README
@@ -33,7 +33,7 @@ kits/
     Nuxt/
     Next/
     Astro/
-  Shared/
+  Frontend/
     Nuxt/       starter-nuxt's frontend/ and its DDEV ports, which work with either Craft version
     Next/       starter-next's frontend/ and its DDEV ports, which work with either Craft version
     Astro/      starter-astro's frontend/ and its DDEV ports, which work with either Craft version
@@ -43,22 +43,22 @@ Craft 5 kits:
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
-| `twig-5` | Craft5/Blank → Craft5/DDEV → Craft5/Starter → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
-| `wordpress-5` | Craft5/Blank → Craft5/DDEV → Craft5/Starter → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
-| `nuxt-5` | Craft5/Blank → Craft5/Starter (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
-| `next-5` | Craft5/Blank → Craft5/Starter (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
-| `astro-5` | Craft5/Blank → Craft5/Starter (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
-| `europa-5` | Craft5/Blank → Craft5/DDEV → Craft5/Starter → Craft5/Europa | `craftcms/europa-museum@5.x` |
+| `twig-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
+| `wordpress-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
+| `nuxt-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
+| `next-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Next → Craft5/Next | `craftcms/starter-next@5.x` |
+| `astro-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
+| `europa-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/Europa | `craftcms/europa-museum@5.x` |
 
 Craft 6 kits:
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
-| `twig-6` | Craft6/Blank → Craft6/DDEV → Craft6/Starter → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
-| `blade-6` | Craft6/Blank → Craft6/DDEV → Craft6/Starter → Craft6/Guestbook → Craft6/Blade | `craftcms/starter-blade@6.x` |
-| `nuxt-6` | Craft6/Blank → Craft6/Starter (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
-| `next-6` | Craft6/Blank → Craft6/Starter (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Shared/Next → Craft6/Next | `craftcms/starter-next@6.x` |
-| `astro-6` | Craft6/Blank → Craft6/Starter (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Shared/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |
+| `twig-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
+| `blade-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Craft6/Blade | `craftcms/starter-blade@6.x` |
+| `nuxt-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
+| `next-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Next → Craft6/Next | `craftcms/starter-next@6.x` |
+| `astro-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |
 
 Put a file in the lowest layer that every kit needing it shares. To add a kit, add its layer folder and an entry in `kits.json`.
 
@@ -66,8 +66,8 @@ A layer can be copied into a subfolder instead of the build root, the way headle
 
 ```json
 "layers": [
-    { "layer": "Craft5/Blank", "into": "backend" },
-    { "layer": "Craft5/Starter", "into": "backend" },
+    { "layer": "Craft5/Skeleton", "into": "backend" },
+    { "layer": "Craft5/Base", "into": "backend" },
     "Craft5/DDEV",
     "Craft5/Headless",
     "Craft5/Nuxt"
@@ -88,7 +88,7 @@ For example, `Craft6/Nuxt/backend/.env.example` is one line, `APP_NAME="Nuxt Sta
 
 ### DDEV config
 
-`.ddev/config.yaml` merges the same way, by top-level key. A later layer's copy holds only the keys it changes or adds, and each key replaces the earlier value whole, including nested maps and lists. `CraftN/DDEV` sets the project type, PHP version (8.5 for both Craft versions) and database (MySQL 8.0 on Craft 5, PostgreSQL 17 on Craft 6). `CraftN/Headless` adds the `backend/` docroot and Composer root, `Shared/<FE>` adds the front end's ports and dev server, and each kit sets its `name` and the hostnames built from it. `sync` writes each changed key back to the layer that sets it.
+`.ddev/config.yaml` merges the same way, by top-level key. A later layer's copy holds only the keys it changes or adds, and each key replaces the earlier value whole, including nested maps and lists. `CraftN/DDEV` sets the project type, PHP version (8.5 for both Craft versions) and database (MySQL 8.0 on Craft 5, PostgreSQL 17 on Craft 6). `CraftN/Headless` adds the `backend/` docroot and Composer root, `Frontend/<FE>` adds the front end's ports and dev server, and each kit sets its `name` and the hostnames built from it. `sync` writes each changed key back to the layer that sets it.
 
 The headless kits' `api-site.conf` lives in `CraftN/Headless` and answers on `server_name api.*`, so it works for any project name.
 
@@ -119,7 +119,7 @@ Review `git status` before committing. Files Craft generates during install, suc
 
 ### Updating Craft
 
-The kits of each Craft version share one `composer.lock` in `Craft5/Starter` or `Craft6/Starter`, except `wordpress-5`, whose plugins need their own in `Craft5/WordPress`. Project config YAML is tied to the Craft version that wrote it, so updating Craft means installing on the old version, then upgrading. `craft:update` does that for every kit of a Craft version, using a scratch Postgres database whose tables it drops:
+The kits of each Craft version share one `composer.lock` in `Craft5/Base` or `Craft6/Base`, except `wordpress-5`, whose plugins need their own in `Craft5/WordPress`. Project config YAML is tied to the Craft version that wrote it, so updating Craft means installing on the old version, then upgrading. `craft:update` does that for every kit of a Craft version, using a scratch Postgres database whose tables it drops:
 
 ```bash
 php artisan craft:update 5 --constraint=^5.13.0 --db-database=craft_update
@@ -148,7 +148,7 @@ To change Europa's content or content model, build it, restore `seed.sql` into a
 
 - **Tests** runs the orchestrator tests, then builds every kit, installs it against Postgres from its own project config, fails if installing rewrote that config, builds the frontend if the kit has one, and requests the control panel login page (plus the home page for non-headless kits).
 - **Build and Push Kit Changes** builds every kit on `main` and pushes the result to the kit's repository and branch. It needs a `STARTER_KIT_TOKEN` secret that can push to those repositories. The two workflows below open their pull requests with it too, because pull requests opened with the default `GITHUB_TOKEN` don't trigger Tests. So it also needs write access to contents and pull requests on this repository.
-- **Sync Craft Skeleton** opens a weekly pull request that refreshes the `*/Blank` layers from `craftcms/craft`.
+- **Sync Craft Skeleton** opens a weekly pull request that refreshes the `*/Skeleton` layers from `craftcms/craft`.
 - **Update Craft** runs `craft:update 5` and `craft:update 6` weekly against a Postgres service and opens a pull request per Craft version with the updated locks and project config. Each version runs on its own, so a broken Craft release only blocks its own update.
 
 ## Craft 6 notes

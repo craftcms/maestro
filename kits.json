@@ -1,10 +1,10 @@
 {
     "skeletons": {
-        "Craft5/Blank": {
+        "Craft5/Skeleton": {
             "repository": "craftcms/craft",
             "ref": "5.x"
         },
-        "Craft6/Blank": {
+        "Craft6/Skeleton": {
             "repository": "craftcms/craft",
             "ref": "6.x",
             "exclude": ["resources/views/index.twig"]
@@ -14,35 +14,35 @@
         "twig-5": {
             "name": "Twig (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Blank", "Craft5/DDEV", "Craft5/Starter", "Craft5/Guestbook", "Craft5/Twig"],
+            "layers": ["Craft5/Skeleton", "Craft5/DDEV", "Craft5/Base", "Craft5/Guestbook", "Craft5/Twig"],
             "repository": "craftcms/starter-twig",
             "branch": "5.x"
         },
         "twig-6": {
             "name": "Twig (Craft 6)",
             "craft": 6,
-            "layers": ["Craft6/Blank", "Craft6/DDEV", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Twig"],
+            "layers": ["Craft6/Skeleton", "Craft6/DDEV", "Craft6/Base", "Craft6/Guestbook", "Craft6/Twig"],
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
         },
         "blade-6": {
             "name": "Blade (Craft 6)",
             "craft": 6,
-            "layers": ["Craft6/Blank", "Craft6/DDEV", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Blade"],
+            "layers": ["Craft6/Skeleton", "Craft6/DDEV", "Craft6/Base", "Craft6/Guestbook", "Craft6/Blade"],
             "repository": "craftcms/starter-blade",
             "branch": "6.x"
         },
         "wordpress-5": {
             "name": "WordPress (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Blank", "Craft5/DDEV", "Craft5/Starter", "Craft5/WordPress"],
+            "layers": ["Craft5/Skeleton", "Craft5/DDEV", "Craft5/Base", "Craft5/WordPress"],
             "repository": "craftcms/starter-wordpress",
             "branch": "5.x"
         },
         "europa-5": {
             "name": "Europa Museum (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Blank", "Craft5/DDEV", "Craft5/Starter", "Craft5/Europa"],
+            "layers": ["Craft5/Skeleton", "Craft5/DDEV", "Craft5/Base", "Craft5/Europa"],
             "seed": { "file": "seed.sql", "dump": "php craft demos/dump" },
             "repository": "craftcms/europa-museum",
             "branch": "5.x"
@@ -51,11 +51,11 @@
             "name": "Nuxt (Craft 5)",
             "craft": 5,
             "layers": [
-                { "layer": "Craft5/Blank", "into": "backend" },
-                { "layer": "Craft5/Starter", "into": "backend" },
+                { "layer": "Craft5/Skeleton", "into": "backend" },
+                { "layer": "Craft5/Base", "into": "backend" },
                 "Craft5/DDEV",
                 "Craft5/Headless",
-                "Shared/Nuxt",
+                "Frontend/Nuxt",
                 "Craft5/Nuxt"
             ],
             "repository": "craftcms/starter-nuxt",
@@ -65,11 +65,11 @@
             "name": "Next (Craft 5)",
             "craft": 5,
             "layers": [
-                { "layer": "Craft5/Blank", "into": "backend" },
-                { "layer": "Craft5/Starter", "into": "backend" },
+                { "layer": "Craft5/Skeleton", "into": "backend" },
+                { "layer": "Craft5/Base", "into": "backend" },
                 "Craft5/DDEV",
                 "Craft5/Headless",
-                "Shared/Next",
+                "Frontend/Next",
                 "Craft5/Next"
             ],
             "repository": "craftcms/starter-next",
@@ -79,11 +79,11 @@
             "name": "Astro (Craft 5)",
             "craft": 5,
             "layers": [
-                { "layer": "Craft5/Blank", "into": "backend" },
-                { "layer": "Craft5/Starter", "into": "backend" },
+                { "layer": "Craft5/Skeleton", "into": "backend" },
+                { "layer": "Craft5/Base", "into": "backend" },
                 "Craft5/DDEV",
                 "Craft5/Headless",
-                "Shared/Astro",
+                "Frontend/Astro",
                 "Craft5/Astro"
             ],
             "repository": "craftcms/starter-astro",
@@ -93,11 +93,11 @@
             "name": "Astro (Craft 6)",
             "craft": 6,
             "layers": [
-                { "layer": "Craft6/Blank", "into": "backend" },
-                { "layer": "Craft6/Starter", "into": "backend" },
+                { "layer": "Craft6/Skeleton", "into": "backend" },
+                { "layer": "Craft6/Base", "into": "backend" },
                 "Craft6/DDEV",
                 "Craft6/Headless",
-                "Shared/Astro",
+                "Frontend/Astro",
                 "Craft6/Astro"
             ],
             "repository": "craftcms/starter-astro",
@@ -107,11 +107,11 @@
             "name": "Next (Craft 6)",
             "craft": 6,
             "layers": [
-                { "layer": "Craft6/Blank", "into": "backend" },
-                { "layer": "Craft6/Starter", "into": "backend" },
+                { "layer": "Craft6/Skeleton", "into": "backend" },
+                { "layer": "Craft6/Base", "into": "backend" },
                 "Craft6/DDEV",
                 "Craft6/Headless",
-                "Shared/Next",
+                "Frontend/Next",
                 "Craft6/Next"
             ],
             "repository": "craftcms/starter-next",
@@ -121,11 +121,11 @@
             "name": "Nuxt (Craft 6)",
             "craft": 6,
             "layers": [
-                { "layer": "Craft6/Blank", "into": "backend" },
-                { "layer": "Craft6/Starter", "into": "backend" },
+                { "layer": "Craft6/Skeleton", "into": "backend" },
+                { "layer": "Craft6/Base", "into": "backend" },
                 "Craft6/DDEV",
                 "Craft6/Headless",
-                "Shared/Nuxt",
+                "Frontend/Nuxt",
                 "Craft6/Nuxt"
             ],
             "repository": "craftcms/starter-nuxt",
