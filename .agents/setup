@@ -46,7 +46,16 @@ if ! command -v composer >/dev/null || ! composer --version --no-ansi | grep -q 
     php "$temp/composer-setup.php" --2 --install-dir="$temp" --filename=composer
     sudo install -m 755 "$temp/composer" /usr/local/bin/composer
 fi
-if ! command -v node >/dev/null || [[ "$(node --version)" != v24.* ]]; then
+
+# Exercise npm's package/cache code offline; --version can pass with broken dependencies.
+mkdir -p "$temp/package"
+printf '{"name":"maestro-npm-health-check","version":"1.0.0"}\n' > "$temp/package/package.json"
+tar -czf "$temp/npm-health-check.tgz" -C "$temp" package
+npm_healthy() {
+    npm cache add "$temp/npm-health-check.tgz" --cache "$temp/npm-cache" --offline
+}
+if ! command -v node >/dev/null || [[ "$(node --version)" != v24.* ]] || ! npm_healthy; then
+    echo 'Installing a clean Node 24 and npm distribution'
     case "$(uname -m)" in
         x86_64) arch=x64 ;;
         aarch64) arch=arm64 ;;
@@ -56,8 +65,11 @@ if ! command -v node >/dev/null || [[ "$(node --version)" != v24.* ]]; then
     archive=$(awk -v suffix="-linux-$arch.tar.xz" '$2 ~ suffix "$" {print $2}' "$temp/SHASUMS256.txt")
     curl -fsSL "https://nodejs.org/dist/latest-v24.x/$archive" -o "$temp/$archive"
     (cd "$temp"; grep " $archive\$" SHASUMS256.txt | sha256sum --check)
+    # Remove stale npm dependencies rather than merging the archive over them.
+    sudo rm -rf /usr/local/lib/node_modules/npm
     sudo tar -xJf "$temp/$archive" -C /usr/local --strip-components=1
 fi
+npm_healthy
 
 echo 'Installing orchestrator dependencies from composer.lock'
 [[ -f orchestrator/.env ]] || cp orchestrator/.env.example orchestrator/.env
