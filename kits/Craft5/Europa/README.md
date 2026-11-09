@@ -6,7 +6,7 @@
 
 _Europa_ is a fictitious art museum website build with [Craft CMS](https://craftcms.com). This repository houses the source code for our demo, which you can try for yourself by visiting [craftcms.com/demo](https://craftcms.com/demo?kind=europa).
 
-We’ve also included instructions below for setting up the demo in a local development environment with [Docker Compose](#docker-compose) and [DDEV](https://ddev.com/).
+We’ve also included instructions below for setting up the demo in a local development environment with [DDEV](https://ddev.com/).
 
 _Europa_ shows off many of Craft’s [core features](https://craftcms.com/features) and includes some [popular plugins](https://plugins.craftcms.com/) to spark your curiosity.
 
@@ -30,7 +30,7 @@ _Europa_’s front-end was built with modern Javascript and CSS tools. Craft its
 
 ## Local Development
 
-This repository is ready to use with [DDEV](#ddev) and [Docker Compose](#docker-compose).
+This repository is ready to use with [DDEV](#ddev).
 
 > [!TIP]
 > If you’re using a different local environment, refer to Craft’s [requirements](https://craftcms.com/docs/5.x/requirements.html) and our [installation instructions](https://craftcms.com/docs/5.x/install.html).
@@ -48,33 +48,13 @@ ddev craft db/restore seed.sql --interactive=0
 ddev craft setup/security-key
 ```
 
-As with the vanilla Docker setup process, you can create a user for yourself with the CLI:
+Create a user for yourself with the CLI:
 
 ```bash
 ddev craft users/create --admin
 # ...
 ddev launch admin
 ```
-
-### Docker Compose
-
-We test demo projects in automated pipelines, so the project is ready to go if you have [Docker Compose](https://docs.docker.com/compose/) installed! The `Makefile` contains all the steps to boot up the project:
-
-```bash
-# Create containers and install dependencies:
-make init
-# Restore the bundled database backup:
-make restore
-```
-
-You can use the CLI to create a new user, as well:
-
-```bash
-docker-compose exec web php craft users/create --admin
-```
-
-> [!TIP]
-> Visit the control panel in your running project `http://localhost:8080/admin`!
 
 ### Front End
 
