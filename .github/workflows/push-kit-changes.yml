@@ -67,13 +67,12 @@ jobs:
           BUILD: ${{ matrix.build }}
         run: bash -c "$BUILD"
 
+      # Not actions/checkout: it can't check out an empty repository, which a new kit's is.
       - name: Checkout ${{ matrix.repository }}
-        uses: actions/checkout@v5
-        with:
-          repository: ${{ matrix.repository }}
-          path: kit
-          fetch-depth: 0
-          token: ${{ secrets.STARTER_KIT_TOKEN }}
+        env:
+          TOKEN: ${{ secrets.STARTER_KIT_TOKEN }}
+          REPOSITORY: ${{ matrix.repository }}
+        run: git clone --quiet "https://x-access-token:${TOKEN}@github.com/${REPOSITORY}.git" kit
 
       - name: Copy Build to Kit
         working-directory: kit
