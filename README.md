@@ -35,17 +35,24 @@ kits/
     Astro/      starter-astro's frontend/, which works with either Craft version
 ```
 
+Craft 5 kits:
+
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
 | `twig` | Craft5/Blank → Craft5/Starter → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
 | `wordpress` | Craft5/Blank → Craft5/Starter → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
-| `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
 | `astro` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
-| `astro-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |
-| `next-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Next → Craft6/Next | `craftcms/starter-next@6.x` |
+
+Craft 6 kits:
+
+| Kit | Layers | Pushed to |
+| --- | --- | --- |
+| `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `nuxt-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
+| `next-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Next → Craft6/Next | `craftcms/starter-next@6.x` |
+| `astro-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |
 
 Put a file in the lowest layer that every kit needing it shares. To add a kit, add its layer folder and an entry in `kits.json`.
 
