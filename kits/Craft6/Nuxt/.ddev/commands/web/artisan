@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-## Description: Run artisan in the Craft backend
-## Usage: artisan [args]
-
-cd ./backend && php artisan "$@"

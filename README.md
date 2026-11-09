@@ -103,7 +103,7 @@ The Tests workflow fails when a kit's project config doesn't match its Craft ver
 
 ## Craft 6 notes
 
-Craft 6 projects are Laravel applications. The Craft 6 layers follow the `craftcms/craft@6.x` skeleton: templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The Craft 6 project config was produced by upgrading the Craft 5 kit's database with `php artisan craft:up` and writing it out again.
+Craft 6 projects are Laravel applications, so their DDEV project type is `laravel`. The Craft 6 layers follow the `craftcms/craft@6.x` skeleton: templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The Craft 6 project config was produced by upgrading the Craft 5 kit's database with `php artisan craft:up` and writing it out again.
 
 While the Craft 6 ecosystem is in alpha:
 

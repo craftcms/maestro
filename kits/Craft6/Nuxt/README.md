@@ -24,7 +24,6 @@ This project assumes you have our recommended development environment  [DDEV](ht
 1. Set up your Craft CMS backend:
 
     ```bash
-    cp backend/.env.example backend/.env
     ddev composer install
     ddev artisan key:generate
     ddev artisan craft:install
@@ -99,7 +98,7 @@ There is no `.gitignore` at the root of the project—instead, each system maint
 
 The `backend/` directory is a standard Craft 6 installation, which is a Laravel application, so its structure should be familiar. Craft is configured to run in [headless mode](https://craftcms.com/docs/5.x/reference/config/general.html#headlessmode), which means it doesn’t perform any element routing, nor template rendering—in fact, it will only respond to _control panel_, _action_, and static asset requests (like any images you might upload).
 
-Craft uses the `PRIMARY_SITE_URL` environment variable to generate fully-qualified URLs for front-end pages, and `APP_URL` for the control panel and assets. The GraphQL API is served at `/api` by `backend/routes/api.php`, without sessions or CSRF tokens, and `backend/config/cors.php` lets the front end call it from the browser. With DDEV, both URLs and the database connection are set in `.ddev/config.yaml`.
+Craft uses the `PRIMARY_SITE_URL` environment variable to generate fully-qualified URLs for front-end pages, and `APP_URL` for the control panel and assets. The GraphQL API is served at `/api` by `backend/routes/api.php`, without sessions or CSRF tokens, and `backend/config/cors.php` lets the front end call it from the browser. With DDEV, both URLs are set in `.ddev/config.yaml`, and DDEV creates `backend/.env` from `backend/.env.example` with the database connection when the project starts.
 
 ### Front End
 
