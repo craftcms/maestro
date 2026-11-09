@@ -88,7 +88,7 @@ For example, `Craft6/Nuxt/backend/.env.example` is one line, `APP_NAME="Nuxt Sta
 
 ### DDEV config
 
-`.ddev/config.yaml` merges the same way, by top-level key. A later layer's copy holds only the keys it changes or adds, and each key replaces the earlier value whole, including nested maps and lists. `CraftN/DDEV` sets the project type, PHP version (8.2 on Craft 5, 8.5 on Craft 6) and database (MySQL 8.0 on Craft 5, PostgreSQL 17 on Craft 6). `CraftN/Headless` adds the `backend/` docroot and Composer root, `Shared/<FE>` adds the front end's ports and dev server, and each kit sets its `name` and the hostnames built from it. `sync` writes each changed key back to the layer that sets it.
+`.ddev/config.yaml` merges the same way, by top-level key. A later layer's copy holds only the keys it changes or adds, and each key replaces the earlier value whole, including nested maps and lists. `CraftN/DDEV` sets the project type, PHP version (8.5 for both Craft versions) and database (MySQL 8.0 on Craft 5, PostgreSQL 17 on Craft 6). `CraftN/Headless` adds the `backend/` docroot and Composer root, `Shared/<FE>` adds the front end's ports and dev server, and each kit sets its `name` and the hostnames built from it. `sync` writes each changed key back to the layer that sets it.
 
 The headless kits' `api-site.conf` lives in `CraftN/Headless` and answers on `server_name api.*`, so it works for any project name.
 
