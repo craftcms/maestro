@@ -14,14 +14,28 @@
         "twig-5": {
             "name": "Twig (Craft 5)",
             "craft": 5,
-            "layers": ["Craft5/Skeleton", "Craft5/DDEV", "Craft5/Base", "Craft5/Guestbook", "Craft5/Twig"],
+            "layers": [
+                "Craft5/Skeleton",
+                "Craft5/DDEV",
+                "Craft5/Base",
+                "Craft5/Guestbook",
+                { "layer": "Frontend/Twig", "into": "templates" },
+                "Craft5/Twig"
+            ],
             "repository": "craftcms/starter-twig",
             "branch": "5.x"
         },
         "twig-6": {
             "name": "Twig (Craft 6)",
             "craft": 6,
-            "layers": ["Craft6/Skeleton", "Craft6/DDEV", "Craft6/Base", "Craft6/Guestbook", "Craft6/Twig"],
+            "layers": [
+                "Craft6/Skeleton",
+                "Craft6/DDEV",
+                "Craft6/Base",
+                "Craft6/Guestbook",
+                { "layer": "Frontend/Twig", "into": "resources/views" },
+                "Craft6/Twig"
+            ],
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
         },

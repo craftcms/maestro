@@ -15,7 +15,7 @@ kits/
     DDEV/       the DDEV config every Craft 5 kit starts from: project type, PHP, database
     Base/       what every Craft 5 kit shares: Composer files and lock, database .env settings, .gitignore, licence
     Guestbook/  the guestbook site: content model, Cloud
-    Twig/       starter-twig: Twig templates, DDEV project name, README
+    Twig/       starter-twig: the Twig templates that only work on Craft 5, DDEV project name, README
     WordPress/  starter-wordpress: WordPress-style content model, templates, its own Composer files for comments and wp-import, README
     Headless/   what headless kits share: backend/ with headless mode, GraphQL, CORS and the content model; DDEV backend settings and API server
     Nuxt/       starter-nuxt's DDEV project name, backend .env example, and README
@@ -34,6 +34,7 @@ kits/
     Next/
     Astro/
   Frontend/
+    Twig/       starter-twig's templates that work with either Craft version, copied into templates/ or resources/views/
     Nuxt/       starter-nuxt's frontend/ and its DDEV ports, which work with either Craft version
     Next/       starter-next's frontend/ and its DDEV ports, which work with either Craft version
     Astro/      starter-astro's frontend/ and its DDEV ports, which work with either Craft version
@@ -43,7 +44,7 @@ Craft 5 kits:
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
-| `twig-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
+| `twig-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/Guestbook → Frontend/Twig (into `templates/`) → Craft5/Twig | `craftcms/starter-twig@5.x` |
 | `wordpress-5` | Craft5/Skeleton → Craft5/DDEV → Craft5/Base → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
 | `nuxt-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next-5` | Craft5/Skeleton → Craft5/Base (both into `backend/`) → Craft5/DDEV → Craft5/Headless → Frontend/Next → Craft5/Next | `craftcms/starter-next@5.x` |
@@ -54,7 +55,7 @@ Craft 6 kits:
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
-| `twig-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
+| `twig-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Frontend/Twig (into `resources/views/`) → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `blade-6` | Craft6/Skeleton → Craft6/DDEV → Craft6/Base → Craft6/Guestbook → Craft6/Blade | `craftcms/starter-blade@6.x` |
 | `nuxt-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 | `next-6` | Craft6/Skeleton → Craft6/Base (both into `backend/`) → Craft6/DDEV → Craft6/Headless → Frontend/Next → Craft6/Next | `craftcms/starter-next@6.x` |
@@ -75,6 +76,8 @@ A layer can be copied into a subfolder instead of the build root, the way headle
 ```
 
 `Craft5/Headless` is copied to the build root, with its Craft files under its own `backend/`, so it can also add to the root `.ddev/` config.
+
+`Frontend/Twig` is copied into `templates/` on Craft 5 and `resources/views/` on Craft 6. It holds only templates that work on both. `Craft5/Twig` and `Craft6/Twig` override the few that use version-specific APIs, such as `craft.app` on Craft 5 or Laravel's `session()` on Craft 6. `sync` puts a new template in `CraftN/Twig`; pass `--layer=Frontend/Twig` when it works on both.
 
 ### .env files
 
