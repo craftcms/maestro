@@ -32,5 +32,6 @@ return GeneralConfig::create()
     ])
     // Serve only the control panel and the GraphQL API; the front end renders pages
     ->headlessMode(true)
-    ->allowedGraphqlOrigins([getenv('CRAFT_URL'), getenv('PRIMARY_SITE_URL')])
+    // Leave CORS to the filter in config/app.web.php, instead of allowing every origin
+    ->allowedGraphqlOrigins(false)
 ;

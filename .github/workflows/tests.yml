@@ -120,7 +120,14 @@ jobs:
       - name: Build Frontend
         if: hashFiles('build/frontend/package.json') != ''
         working-directory: build/frontend
+        # Some frameworks (e.g. Next) render pages from the API at build time, so point
+        # them at the backend started above. These override the values in .env.
+        env:
+          CRAFT_URL: http://127.0.0.1:8000
+          CRAFT_DOMAIN: 127.0.0.1
+          BASE_URL: http://127.0.0.1:3000
         run: |
+          cp .env.example .env
           npm ci
           npm run build
 

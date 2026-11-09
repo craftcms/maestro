@@ -36,6 +36,17 @@
             "repository": "craftcms/starter-nuxt",
             "branch": "5.x"
         },
+        "next": {
+            "name": "Next (Craft 5)",
+            "craft": 5,
+            "layers": [
+                { "layer": "Craft5/Blank", "into": "backend" },
+                { "layer": "Craft5/Headless", "into": "backend" },
+                "Craft5/Next"
+            ],
+            "repository": "craftcms/starter-next",
+            "branch": "5.x"
+        },
         "nuxt-6": {
             "name": "Nuxt (Craft 6)",
             "craft": 6,

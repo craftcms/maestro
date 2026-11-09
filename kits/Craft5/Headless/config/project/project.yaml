@@ -1,4 +1,4 @@
-dateModified: 1794216528
+dateModified: 1794218364
 elementSources:
   craft\elements\Entry:
     -
@@ -146,7 +146,7 @@ meta:
     9d082133-4710-4468-ab39-80db8c9fcf59: Code # Code
     9d42aa56-4a66-4d0b-b8a9-84a4cb387788: 'Text block' # Text block
     25b2446d-c1d2-4aa1-8184-3147e617f069: Text # Text
-    58ccb571-6c72-449f-8e7b-6f43c5d416b3: 'Nuxt Starter' # Nuxt Starter
+    58ccb571-6c72-449f-8e7b-6f43c5d416b3: $CRAFT_SITE_NAME # $CRAFT_SITE_NAME
     70b2614b-639a-4de2-8c11-3851d36d6f8c: 'Blog Categories' # Blog Categories
     163c895f-0c05-4845-80e2-043b2346d830: Address # Address
     0413e9dc-1c8a-4221-b81d-c9f6c0594cbd: Hero # Hero
@@ -174,7 +174,7 @@ plugins:
 system:
   edition: solo
   live: true
-  name: 'Nuxt Starter'
+  name: $CRAFT_SITE_NAME
   retryDuration: null
   schemaVersion: 5.11.0.2
   timeZone: America/Los_Angeles

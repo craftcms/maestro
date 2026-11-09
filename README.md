@@ -14,8 +14,9 @@ kits/
     Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
     Starter/    what every Craft 5 starter shares: content model, templates, DDEV, Cloud
     Twig/       what only starter-twig adds
-    Headless/   the Craft backend headless kits share: headless mode, GraphQL, content model
-    Nuxt/       starter-nuxt's Craft 5 DDEV config and README
+    Headless/   the Craft backend headless kits share: headless mode, GraphQL, CORS, content model
+    Nuxt/       starter-nuxt's Craft 5 DDEV config, backend .env example, and README
+    Next/       starter-next's frontend/, DDEV config, backend .env example, and README
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/
@@ -31,6 +32,7 @@ kits/
 | `twig` | Craft5/Blank → Craft5/Starter → Craft5/Twig | `craftcms/starter-twig@5.x` |
 | `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
+| `next` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Craft5/Next | `craftcms/starter-next@5.x` |
 | `nuxt-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 
 Put a file in the lowest layer that every kit needing it shares. To add a kit, add its layer folder and an entry in `kits.json`.
@@ -44,6 +46,8 @@ A layer can be copied into a subfolder instead of the build root, the way headle
     "Craft5/Nuxt"
 ]
 ```
+
+Headless kits share one Craft backend, so its project config can't name the site after one front end. The site and system name are `$CRAFT_SITE_NAME`, which each kit sets in its `backend/.env.example.dev`.
 
 ## Working on a kit
 
