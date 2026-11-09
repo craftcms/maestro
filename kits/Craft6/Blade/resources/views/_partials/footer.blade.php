@@ -1,0 +1,9 @@
+<footer class="bg-slate-50 py-6 px-2 text-sm">
+  <div class="container mx-auto">
+    <p class="font-bold">{{ $siteName }}</p>
+    @php($address = $global->address->one())
+    @if ($address)
+      {!! Addresses::formatAddress($address) !!}
+    @endif
+  </div>
+</footer>

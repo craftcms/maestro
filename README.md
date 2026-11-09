@@ -23,8 +23,9 @@ kits/
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/    .gitignore and licence (the skeleton's .env.example already has database settings)
-    Guestbook/  the guestbook site's content model
+    Guestbook/  the guestbook site's content model, shared by Twig and Blade
     Twig/
+    Blade/      starter-blade: the guestbook site in Blade templates, DDEV config, README
     Headless/
     Nuxt/
     Next/
@@ -50,6 +51,7 @@ Craft 6 kits:
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
 | `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
+| `blade-6` | Craft6/Blank → Craft6/Starter → Craft6/Guestbook → Craft6/Blade | `craftcms/starter-blade@6.x` |
 | `nuxt-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 | `next-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Next → Craft6/Next | `craftcms/starter-next@6.x` |
 | `astro-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Astro → Craft6/Astro | `craftcms/starter-astro@6.x` |

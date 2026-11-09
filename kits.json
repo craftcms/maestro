@@ -25,6 +25,13 @@
             "repository": "craftcms/starter-twig",
             "branch": "6.x"
         },
+        "blade-6": {
+            "name": "Blade (Craft 6)",
+            "craft": 6,
+            "layers": ["Craft6/Blank", "Craft6/Starter", "Craft6/Guestbook", "Craft6/Blade"],
+            "repository": "craftcms/starter-blade",
+            "branch": "6.x"
+        },
         "wordpress-5": {
             "name": "WordPress (Craft 5)",
             "craft": 5,
