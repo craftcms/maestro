@@ -17,6 +17,7 @@ kits/
     Headless/   the Craft backend headless kits share: headless mode, GraphQL, CORS, content model
     Nuxt/       starter-nuxt's Craft 5 DDEV config, backend .env example, and README
     Next/       starter-next's Craft 5 DDEV config, backend .env example, and README
+    Astro/      starter-astro's Craft 5 DDEV config, backend .env example, and README
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
     Starter/
@@ -27,6 +28,7 @@ kits/
   Shared/
     Nuxt/       starter-nuxt's frontend/, which works with either Craft version
     Next/       starter-next's frontend/, which works with either Craft version
+    Astro/      starter-astro's frontend/
 ```
 
 | Kit | Layers | Pushed to |
@@ -35,6 +37,7 @@ kits/
 | `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
+| `astro` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
 | `next-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Next → Craft6/Next | `craftcms/starter-next@6.x` |
 | `nuxt-6` | Craft6/Blank → Craft6/Headless (both into `backend/`) → Shared/Nuxt → Craft6/Nuxt | `craftcms/starter-nuxt@6.x` |
 

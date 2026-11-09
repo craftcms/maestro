@@ -48,6 +48,18 @@
             "repository": "craftcms/starter-next",
             "branch": "5.x"
         },
+        "astro": {
+            "name": "Astro (Craft 5)",
+            "craft": 5,
+            "layers": [
+                { "layer": "Craft5/Blank", "into": "backend" },
+                { "layer": "Craft5/Headless", "into": "backend" },
+                "Shared/Astro",
+                "Craft5/Astro"
+            ],
+            "repository": "craftcms/starter-astro",
+            "branch": "5.x"
+        },
         "next-6": {
             "name": "Next (Craft 6)",
             "craft": 6,
