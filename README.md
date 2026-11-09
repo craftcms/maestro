@@ -12,15 +12,17 @@ Forked from [laravel/maestro](https://github.com/laravel/maestro), which does th
 kits/
   Craft5/
     Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
-    Starter/    what every Craft 5 starter shares: content model, templates, DDEV, Cloud
-    Twig/       what only starter-twig adds
+    Starter/    what every Craft 5 starter without a separate front end shares: database .env settings, .gitignore, licence
+    Guestbook/  the guestbook site: content model, Twig templates, Cloud
+    Twig/       starter-twig's DDEV config and README
     Headless/   the Craft backend headless kits share: headless mode, GraphQL, CORS, content model
     Nuxt/       starter-nuxt's Craft 5 DDEV config, backend .env example, and README
     Next/       starter-next's Craft 5 DDEV config, backend .env example, and README
     Astro/      starter-astro's Craft 5 DDEV config, backend .env example, and README
   Craft6/
     Blank/      mirror of craftcms/craft@6.x
-    Starter/
+    Starter/    .gitignore and licence (the skeleton's .env.example already has database settings)
+    Guestbook/
     Twig/
     Headless/
     Nuxt/
@@ -34,8 +36,8 @@ kits/
 
 | Kit | Layers | Pushed to |
 | --- | --- | --- |
-| `twig` | Craft5/Blank → Craft5/Starter → Craft5/Twig | `craftcms/starter-twig@5.x` |
-| `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Twig | `craftcms/starter-twig@6.x` |
+| `twig` | Craft5/Blank → Craft5/Starter → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
+| `twig-6` | Craft6/Blank → Craft6/Starter → Craft6/Guestbook → Craft6/Twig | `craftcms/starter-twig@6.x` |
 | `nuxt` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
 | `next` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
 | `astro` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
