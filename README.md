@@ -12,10 +12,10 @@ Forked from [laravel/maestro](https://github.com/laravel/maestro), which does th
 kits/
   Craft5/
     Blank/      mirror of craftcms/craft@5.x (written only by `skeleton:sync`)
-    Starter/    what starters without a separate front end share: database .env settings, .gitignore, licence
-    Guestbook/  the guestbook site: content model, Composer files, Cloud
+    Starter/    what every Craft 5 kit shares: Composer files and lock, database .env settings, .gitignore, licence
+    Guestbook/  the guestbook site: content model, Cloud
     Twig/       starter-twig: Twig templates, DDEV config, README
-    WordPress/  starter-wordpress: WordPress-style content model, templates, comments, wp-import, README
+    WordPress/  starter-wordpress: WordPress-style content model, templates, its own Composer files for comments and wp-import, README
     Headless/   the Craft backend headless kits share: headless mode, GraphQL, CORS, content model
     Nuxt/       starter-nuxt's Craft 5 DDEV config, backend .env example, and README
     Next/       starter-next's Craft 5 DDEV config, backend .env example, and README
@@ -42,9 +42,9 @@ Craft 5 kits:
 | --- | --- | --- |
 | `twig-5` | Craft5/Blank → Craft5/Starter → Craft5/Guestbook → Craft5/Twig | `craftcms/starter-twig@5.x` |
 | `wordpress-5` | Craft5/Blank → Craft5/Starter → Craft5/WordPress | `craftcms/starter-wordpress@5.x` |
-| `nuxt-5` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
-| `next-5` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
-| `astro-5` | Craft5/Blank → Craft5/Headless (both into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
+| `nuxt-5` | Craft5/Blank → Craft5/Starter → Craft5/Headless (all into `backend/`) → Shared/Nuxt → Craft5/Nuxt | `craftcms/starter-nuxt@5.x` |
+| `next-5` | Craft5/Blank → Craft5/Starter → Craft5/Headless (all into `backend/`) → Shared/Next → Craft5/Next | `craftcms/starter-next@5.x` |
+| `astro-5` | Craft5/Blank → Craft5/Starter → Craft5/Headless (all into `backend/`) → Shared/Astro → Craft5/Astro | `craftcms/starter-astro@5.x` |
 
 Craft 6 kits:
 
@@ -63,6 +63,7 @@ A layer can be copied into a subfolder instead of the build root, the way headle
 ```json
 "layers": [
     { "layer": "Craft5/Blank", "into": "backend" },
+    { "layer": "Craft5/Starter", "into": "backend" },
     { "layer": "Craft5/Headless", "into": "backend" },
     "Craft5/Nuxt"
 ]

@@ -44,6 +44,7 @@
             "craft": 5,
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
+                { "layer": "Craft5/Starter", "into": "backend" },
                 { "layer": "Craft5/Headless", "into": "backend" },
                 "Shared/Nuxt",
                 "Craft5/Nuxt"
@@ -56,6 +57,7 @@
             "craft": 5,
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
+                { "layer": "Craft5/Starter", "into": "backend" },
                 { "layer": "Craft5/Headless", "into": "backend" },
                 "Shared/Next",
                 "Craft5/Next"
@@ -68,6 +70,7 @@
             "craft": 5,
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
+                { "layer": "Craft5/Starter", "into": "backend" },
                 { "layer": "Craft5/Headless", "into": "backend" },
                 "Shared/Astro",
                 "Craft5/Astro"
