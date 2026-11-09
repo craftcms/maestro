@@ -83,6 +83,7 @@
             "@php artisan key:generate --ansi",
             "@php -r \"@unlink('composer.json.default');\"",
             "@php artisan craft:db:restore seed.sql --no-interaction > /dev/null 2>&1",
+      "@php artisan craft:setup:publish --ansi",
             "@php artisan demos:seed > /dev/null 2>&1"
         ],
         "pre-package-uninstall": [

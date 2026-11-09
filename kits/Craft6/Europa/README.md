@@ -38,7 +38,10 @@ ddev composer install
 ddev php artisan key:generate
 ddev php artisan craft:db:restore seed.sql --no-interaction
 ddev php artisan craft:up
+ddev php artisan craft:setup:publish
 ```
+
+`craft:setup:publish` publishes CKEditor's control panel assets, which Composer skipped because the plugin wasn't installed yet.
 
 Create a user for yourself with the CLI:
 

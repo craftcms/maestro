@@ -115,6 +115,8 @@ jobs:
             else
               php artisan craft:install --no-interaction --username=admin --email=admin@example.com --password=password
             fi
+            # Composer published assets before any plugin was installed, so plugins' control panel assets are missing.
+            php artisan craft:setup:publish
             php artisan serve --port=8000 &
           fi
 
