@@ -42,10 +42,23 @@
             "layers": [
                 { "layer": "Craft5/Blank", "into": "backend" },
                 { "layer": "Craft5/Headless", "into": "backend" },
+                "Shared/Next",
                 "Craft5/Next"
             ],
             "repository": "craftcms/starter-next",
             "branch": "5.x"
+        },
+        "next-6": {
+            "name": "Next (Craft 6)",
+            "craft": 6,
+            "layers": [
+                { "layer": "Craft6/Blank", "into": "backend" },
+                { "layer": "Craft6/Headless", "into": "backend" },
+                "Shared/Next",
+                "Craft6/Next"
+            ],
+            "repository": "craftcms/starter-next",
+            "branch": "6.x"
         },
         "nuxt-6": {
             "name": "Nuxt (Craft 6)",
