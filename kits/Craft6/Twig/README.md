@@ -70,7 +70,7 @@ The Craft [control panel](https://craftcms.com/docs/5.x/system/control-panel.htm
 
 ### Project Structure
 
-This project was scaffolded from our blank-slate starter kit, and therefore follows its overall [directory structure](https://craftcms.com/docs/5.x/system/directory-structure.html) and [configuration scheme](https://craftcms.com/docs/5.x/configure.html).
+This project was scaffolded from our blank-slate starter kit, and therefore follows its overall [directory structure](https://laravel.com/docs/structure) and [configuration scheme](https://craftcms.com/docs/6.x/compatibility.html#configuration).
 
 ### Licensing
 
