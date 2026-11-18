@@ -1707,8 +1707,7 @@ CREATE TABLE public.imagetransformindex (
     "dateCreated" timestamp(0) without time zone NOT NULL,
     "dateUpdated" timestamp(0) without time zone NOT NULL,
     uid character(36) DEFAULT '0'::bpchar NOT NULL,
-    error boolean DEFAULT false NOT NULL,
-    transformer character varying(255) DEFAULT NULL::character varying
+    error boolean DEFAULT false NOT NULL
 );
 
 
@@ -3104,7 +3103,6 @@ CREATE TABLE public.volumes (
     "altTranslationKeyFormat" text,
     subpath character varying(255),
     "propagationMethod" character varying(255) DEFAULT 'custom'::character varying NOT NULL,
-    "assetTransformer" character varying(255),
     "hasUrls" boolean DEFAULT false NOT NULL
 );
 
@@ -4939,7 +4937,7 @@ COPY public.imagetransforms (id, name, handle, mode, "position", width, height, 
 --
 
 COPY public.info (id, version, "schemaVersion", "dateCreated", "dateUpdated", uid, "configVersion") FROM stdin;
-1	6.0.0-alpha.20	6.0.0.35	2019-11-25 23:37:04	2026-11-09 15:24:35	b11a290b-ac19-4da8-84ec-fb6620253195	fvyhubvyhrvx
+1	6.0.0-beta.1	6.0.0.36	2019-11-25 23:37:04	2026-11-18 20:19:01	b11a290b-ac19-4da8-84ec-fb6620253195	igijmhwyfnyb
 \.
 
 
@@ -5230,6 +5228,7 @@ COPY public.migrations (id, migration, batch, track) FROM stdin;
 350	2026_11_02_000000_upgrade_to_craft_6	2	plugin:ckeditor
 351	0001_01_01_000001_create_cache_table	2	\N
 352	0001_01_01_000002_create_jobs_table	2	\N
+353	2026_11_09_000000_disk_owned_asset_transformers	3	craft
 36	2017_12_02_004225_update_email_settings	1	craft
 37	2017_12_04_000001_templatecache_index_tune_deux	1	craft
 38	2017_12_05_130908_remove_craftidtokens_refreshtoken_column	1	craft
@@ -5410,7 +5409,7 @@ ckeditor.configs.a6cb7c13-e866-45ba-ad8e-a44c552ff6c1.toolbar.6	"italic"
 ckeditor.configs.a6cb7c13-e866-45ba-ad8e-a44c552ff6c1.toolbar.7	"bulletedList"
 ckeditor.configs.a6cb7c13-e866-45ba-ad8e-a44c552ff6c1.toolbar.8	"numberedList"
 ckeditor.configs.a6cb7c13-e866-45ba-ad8e-a44c552ff6c1.toolbar.9	"link"
-dateModified	1794237078
+dateModified	1795033141
 elementSources.CraftCms\\Cms\\Asset\\Elements\\Asset.0.defaultSort.0	"dateCreated"
 elementSources.CraftCms\\Cms\\Asset\\Elements\\Asset.0.defaultSort.1	"desc"
 elementSources.CraftCms\\Cms\\Asset\\Elements\\Asset.0.defaultViewMode	""
@@ -8749,7 +8748,7 @@ sites.c42694e0-26f4-46d0-9ffe-3e7fe6a64cb9.sortOrder	1
 system.edition	"pro"
 system.name	"Europa Museum"
 system.retryDuration	null
-system.schemaVersion	"6.0.0.35"
+system.schemaVersion	"6.0.0.36"
 system.timeZone	"America/Los_Angeles"
 users.allowPublicRegistration	false
 users.deactivateByDefault	false
@@ -10433,9 +10432,9 @@ COPY public.volumefolders (id, "parentId", "volumeId", name, path, "dateCreated"
 -- Data for Name: volumes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.volumes (id, "fieldLayoutId", name, handle, "sortOrder", "dateCreated", "dateUpdated", "dateDeleted", uid, "titleTranslationMethod", "titleTranslationKeyFormat", fs, "altTranslationMethod", "altTranslationKeyFormat", subpath, "propagationMethod", "assetTransformer", "hasUrls") FROM stdin;
-1	1	Images	images	1	2019-11-25 23:37:05	2026-11-09 15:11:00	\N	a36fa6aa-4824-448f-82cf-b3086f8582c5	site	\N	disk	site	\N	images	custom	\N	t
-3	28	Resources	resources	2	2025-11-20 20:10:37	2026-11-09 15:11:00	\N	39bbec04-e985-41b5-92c1-2b1aa044796e	site	\N	disk	none	\N	resources	custom	\N	t
+COPY public.volumes (id, "fieldLayoutId", name, handle, "sortOrder", "dateCreated", "dateUpdated", "dateDeleted", uid, "titleTranslationMethod", "titleTranslationKeyFormat", fs, "altTranslationMethod", "altTranslationKeyFormat", subpath, "propagationMethod", "hasUrls") FROM stdin;
+1	1	Images	images	1	2019-11-25 23:37:05	2026-11-09 15:11:00	\N	a36fa6aa-4824-448f-82cf-b3086f8582c5	site	\N	disk	site	\N	images	custom	t
+3	28	Resources	resources	2	2025-11-20 20:10:37	2026-11-09 15:11:00	\N	39bbec04-e985-41b5-92c1-2b1aa044796e	site	\N	disk	none	\N	resources	custom	t
 \.
 
 
@@ -10653,7 +10652,7 @@ SELECT pg_catalog.setval('public.info_id_seq', 1, true);
 -- Name: migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.migrations_id_seq', 352, true);
+SELECT pg_catalog.setval('public.migrations_id_seq', 353, true);
 
 
 --
