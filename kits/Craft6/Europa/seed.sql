@@ -5347,7 +5347,7 @@ COPY public.oauth_refresh_tokens (id, access_token_id, revoked, expires_at) FROM
 --
 
 COPY public.plugins (id, handle, version, "schemaVersion", "installDate", "dateCreated", "dateUpdated", uid) FROM stdin;
-26	ckeditor	dev-feature/craft-6	6.0.0.0	2024-02-05 20:35:46	2024-02-05 20:35:46	2026-11-09 15:11:19	99a71ffe-9fa6-4df2-acd1-993892a1768b
+26	ckeditor	6.0.0-beta.1	6.0.0.0	2024-02-05 20:35:46	2024-02-05 20:35:46	2026-11-18 20:26:40	99a71ffe-9fa6-4df2-acd1-993892a1768b
 \.
 
 

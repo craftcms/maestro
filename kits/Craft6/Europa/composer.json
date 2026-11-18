@@ -24,9 +24,9 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.5",
-        "craftcms/ckeditor": "dev-feature/craft-6",
+        "craftcms/ckeditor": "^6.0.0-beta.1",
         "craftcms/cms": "^6.0.0-beta.1",
-        "craftcms/html-field": "dev-feature/craft-6",
+        "craftcms/html-field": "^4.0.0",
         "fakerphp/faker": "^1.23",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0"
