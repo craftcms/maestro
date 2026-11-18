@@ -40,7 +40,13 @@ The Entries sidebar has also been configured to make these pages and sections ea
     ddev composer install
     ```
 
-4. Run the Craft setup wizard:
+4. Generate an application key:
+
+    ```bash
+    ddev php artisan key:generate
+    ```
+
+5. Run the Craft setup wizard:
 
     ```bash
     ddev php artisan craft:install
@@ -64,7 +70,7 @@ The Craft [control panel](https://craftcms.com/docs/5.x/system/control-panel.htm
 
 ### Project Structure
 
-This project was scaffolded from our blank-slate started kit, and therefore follows its overall [directory structure](https://craftcms.com/docs/5.x/system/directory-structure.html) and [configuration scheme](https://craftcms.com/docs/5.x/configure.html).
+This project was scaffolded from our blank-slate starter kit, and therefore follows its overall [directory structure](https://craftcms.com/docs/5.x/system/directory-structure.html) and [configuration scheme](https://craftcms.com/docs/5.x/configure.html).
 
 ### Templates
 
@@ -82,7 +88,7 @@ You can upgrade to Craft _Team_ or _Pro_ any time! Read more about [licensing](h
 
 ### Running on a Different Domain
 
-The DDEV configuration files shipped with this project have a hard-coded project “name” that determines (among other things) the URL prefix. If you would like to change this (say, prior to pushing the project to a [new remote](#pushing-to-a-new-remote)), open `.ddev/config.yml` and update the `name` key.
+The DDEV configuration files shipped with this project have a hard-coded project “name” that determines (among other things) the URL prefix. If you would like to change this (say, prior to pushing the project to a [new remote](#pushing-to-a-new-remote)), open `.ddev/config.yaml` and update the `name` key.
 
 Apply that change by running `ddev start` in the project directory. The site will restart, and be available at `https://{new-name}.ddev.site`!
 

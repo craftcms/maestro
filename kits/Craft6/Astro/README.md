@@ -3,7 +3,7 @@
 > [!WARNING]
 > This branch targets Craft 6, which is in beta. For production sites, use the Craft 5 version on the `5.x` branch.
 
-A minimal, production-ready starter for [Astro 5](https://astro.build) and [Craft CMS](https://craftcms.com/) projects. Check out the [features](#key-features), or [dive right in](#quick-start)!
+A minimal, production-ready starter for [Astro 7](https://astro.build) and [Craft CMS](https://craftcms.com/) projects. Check out the [features](#key-features), or [dive right in](#quick-start)!
 
 > [!TIP]
 > Curious about Craft, but want to try it with a different framework? We have [other starter projects](https://craftcms.com/starters), too!
@@ -14,7 +14,7 @@ This project assumes you have our recommended development environment  [DDEV](ht
 
 1. Clone this repository, and move into the new directory:
     ```bash
-    git clone https://github.com/craftcms/starter-astro.git
+    git clone --branch 6.x https://github.com/craftcms/starter-astro.git
     # ...
     cd starter-astro
     ```
@@ -31,7 +31,7 @@ This project assumes you have our recommended development environment  [DDEV](ht
 
     Write down the username and password you choose, during installation. You'll need it to [log in to the control panel](#control-panel).
 
-1. Generate a token for the _Posts_ GraphQL Schema:
+1. Generate a token for the _Guestbook_ GraphQL schema:
 
     ```bash
     # Display a list of schemas and UUIDs:
@@ -72,7 +72,7 @@ The Craft [control panel](https://craftcms.com/docs/5.x/system/control-panel.htm
 
 ## Key Features
 
-This project includes basic support for a handful of Craft's best features, in a tidy headless package built on [Astro 5](https://astro.build).
+This project includes basic support for a handful of Craft's best features, in a tidy headless package built on [Astro 7](https://astro.build).
 
 ### GraphQL
 
@@ -123,13 +123,13 @@ If you want to compress the GraphQL query feedback loop, open up the Craft contr
 The DDEV configuration files shipped with this project use a specific pair of URLs for the Astro front end and Craft back end:
 
 - **Front end**: `https://starter-astro.ddev.site`
-- **Back end**: `https://api.starter-astro.ddev.com`
+- **Back end**: `https://api.starter-astro.ddev.site`
 
 If you would like to use different URLs, you must make a few changes in `.ddev/config.yaml`:
 
 - Update the `name` key (this influences the `starter-project` segment of the base URL);
 - Change the back-end hostname under the `additional_hostnames` key;
-- Change the `VIRTUAL_HOST` domains under `web_environment`;
+- Change the `VIRTUAL_HOST` domains and `PRIMARY_SITE_URL` under `web_environment`;
 
 Then, a change is required for each of the nginx configuration files:
 
@@ -138,7 +138,7 @@ Then, a change is required for each of the nginx configuration files:
 
 Astro also needs to be told what front-end URLs should look like:
 
-- Update `BASE_URL` in `frontend/.env`;
+- Update `BASE_URL` in `frontend/.env`, and `CRAFT_URL` and `PUBLIC_GQL_HOST` if the back-end URL changed;
 
 Finally, Craft may need to generate absolute URLs to the control panel in some scenarios:
 

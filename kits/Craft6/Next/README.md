@@ -3,7 +3,7 @@
 > [!WARNING]
 > This branch targets Craft 6, which is in beta. For production sites, use the Craft 5 version on the `5.x` branch.
 
-A minimal, production-ready starter for [Next.js 15](https://nextjs.org) and [Craft CMS](https://craftcms.com/) projects. Check out the [features](#key-features), or [dive right in](#quick-start)!
+A minimal, production-ready starter for [Next.js 16](https://nextjs.org) and [Craft CMS](https://craftcms.com/) projects. Check out the [features](#key-features), or [dive right in](#quick-start)!
 
 > [!TIP]
 > Curious about Craft, but want to try it with a different framework? We have [other starter projects](https://craftcms.com/starters), too!
@@ -15,7 +15,7 @@ This project assumes you have our recommended development environment [DDEV](htt
 1. Clone this repository, and move into the new directory:
 
     ```bash
-    git clone https://github.com/craftcms/starter-next.git
+    git clone --branch 6.x https://github.com/craftcms/starter-next.git
     # ...
     cd starter-next
     ```
@@ -69,7 +69,7 @@ The Craft [control panel](https://craftcms.com/docs/5.x/system/control-panel.htm
 
 ## Key Features
 
-This project includes basic support for a handful of Craft’s best features, in a tidy headless package built on [Next.js 15](https://nextjs.org).
+This project includes basic support for a handful of Craft’s best features, in a tidy headless package built on [Next.js 16](https://nextjs.org).
 
 ### GraphQL
 
@@ -120,13 +120,13 @@ If you want to compress the GraphQL query feedback loop, open up the Craft contr
 The DDEV configuration files shipped with this project use a specific pair of URLs for the Next.js front end and Craft back end:
 
 - **Front end**: `https://starter-next.ddev.site`
-- **Back end**: `https://api.starter-next.ddev.com`
+- **Back end**: `https://api.starter-next.ddev.site`
 
 If you would like to use different URLs, you must make a few changes in `.ddev/config.yaml`:
 
 - Update the `name` key (this influences the `starter-project` segment of the base URL);
 - Change the back-end hostname under the `additional_hostnames` key;
-- Change the `VIRTUAL_HOST` domains under `web_environment`;
+- Change the `VIRTUAL_HOST` domains and `PRIMARY_SITE_URL` under `web_environment`;
 
 Then, a change is required for each of the nginx configuration files:
 
@@ -135,7 +135,7 @@ Then, a change is required for each of the nginx configuration files:
 
 Next.js also needs to be told what front-end URLs should look like:
 
-- Update `BASE_URL` in `frontend/.env`;
+- Update `BASE_URL` in `frontend/.env`, and `CRAFT_DOMAIN` if the back-end URL changed;
 
 Finally, Craft may need to generate absolute URLs to the control panel in some scenarios:
 
@@ -146,7 +146,7 @@ Your production configuration will probably look different—as long as Next.js 
 > [!TIP]
 > Always validate your CORS policy when deploying projects that make cross-domain requests!
 
-The _path_ Next.js uses to fetch data via GraphQL must be kept in sync between `backend/config/routes.php` and the `apiBasePath` variable in `frontend/src/lib/graphql.js`.
+Next.js fetches GraphQL from the `/api` path on `CRAFT_URL`. If you move the API, keep the path in `frontend/src/lib/graphql.js` in sync with `backend/routes/api.php`.
 
 ## Contributing
 
