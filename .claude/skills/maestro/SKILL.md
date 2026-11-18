@@ -146,7 +146,7 @@ Don't run `demos:seed` or `demos/seed` before dumping, because it randomises new
 
 ## Craft 6
 
-Craft 6 projects are Laravel applications. Their templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The DDEV project type is `laravel`. While the Craft 6 ecosystem is in alpha, some Craft 5 plugins have no Craft 6 release, so the Craft 6 kits use stand-ins, such as a Markdown field instead of CKEditor. README.md's Craft 6 notes list them. There is no Craft 6 WordPress kit until `wp-import` and `verbb/comments` support Craft 6.
+Craft 6 projects are Laravel applications. Their templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The DDEV project type is `laravel`. While the Craft 6 ecosystem is in beta, some Craft 5 plugins have no Craft 6 release, so the Craft 6 kits use stand-ins, such as a Markdown field instead of CKEditor. README.md's Craft 6 notes list them. There is no Craft 6 WordPress kit until `wp-import` and `verbb/comments` support Craft 6.
 
 ## Rules
 
