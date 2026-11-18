@@ -22,7 +22,7 @@ This repository contains a complete [Craft CMS](https://craftcms.com) applicatio
 1. Clone this repository and move into the folder:
 
    ```bash
-   git clone https://github.com/craftcms/starter-wordpress.git
+   git clone --branch 5.x https://github.com/craftcms/starter-wordpress.git
    cd starter-wordpress/
    ```
 
