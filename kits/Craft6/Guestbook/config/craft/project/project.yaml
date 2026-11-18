@@ -151,6 +151,11 @@ meta:
     d55d172f-8b8f-4bb7-b680-31249981c350: Global # Global
     d390347a-09cf-4b70-a3b4-bc3cca520623: Category # Category
     f7576aa3-c155-4b54-82c9-8cb8c93495c9: Callout # Callout
+plugins:
+  ckeditor:
+    edition: standard
+    enabled: true
+    schemaVersion: 6.0.0.0
 system:
   edition: solo
   name: 'Blog Starter'

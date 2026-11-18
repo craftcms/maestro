@@ -8,7 +8,7 @@ _Europa_ is a fictitious art museum website build with [Craft CMS](https://craft
 
 We’ve also included instructions below for setting up the demo in a local development environment with [DDEV](https://ddev.com/).
 
-_Europa_ shows off many of Craft’s [core features](https://craftcms.com/features). This version runs on Craft 6, which is still in beta, and uses no third-party plugins. Its rich text is edited with [CKEditor](https://github.com/craftcms/ckeditor), installed from its Craft 6 development branch until it has a release.
+_Europa_ shows off many of Craft’s [core features](https://craftcms.com/features). This version runs on Craft 6, which is still in beta, and uses no third-party plugins. Its rich text is edited with the Craft 6 beta of [CKEditor](https://github.com/craftcms/ckeditor).
 
 ### Development Technologies
 

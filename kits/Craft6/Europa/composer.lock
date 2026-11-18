@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "79a3a78debc8e3532b96e665946ad138",
+    "content-hash": "1d25574bb4d194a56ee7ade706c1208d",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -493,21 +493,21 @@
         },
         {
             "name": "craftcms/ckeditor",
-            "version": "dev-feature/craft-6",
+            "version": "6.0.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftcms/ckeditor.git",
-                "reference": "66b7df9556a3bddfd6535a2e32c8de58aca9f3f2"
+                "reference": "44208e171b454a63216db80d265b23e73a2f00ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/ckeditor/zipball/66b7df9556a3bddfd6535a2e32c8de58aca9f3f2",
-                "reference": "66b7df9556a3bddfd6535a2e32c8de58aca9f3f2",
+                "url": "https://api.github.com/repos/craftcms/ckeditor/zipball/44208e171b454a63216db80d265b23e73a2f00ae",
+                "reference": "44208e171b454a63216db80d265b23e73a2f00ae",
                 "shasum": ""
             },
             "require": {
                 "craftcms/cms": "^6.0.0-beta.1",
-                "craftcms/html-field": "dev-feature/craft-6",
+                "craftcms/html-field": "^4.0.0",
                 "embed/embed": "^4.4",
                 "php": "^8.5"
             },
@@ -558,8 +558,8 @@
                 "rss": "https://github.com/craftcms/ckeditor/commits/6.x.atom",
                 "source": "https://github.com/craftcms/ckeditor"
             },
-            "time": "2026-11-09T16:04:46+00:00",
-            "published-time": "2026-11-09T16:05:43+00:00"
+            "time": "2026-11-10T18:44:36+00:00",
+            "published-time": "2026-11-10T18:45:23+00:00"
         },
         {
             "name": "craftcms/cms",
@@ -789,16 +789,16 @@
         },
         {
             "name": "craftcms/html-field",
-            "version": "dev-feature/craft-6",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/craftcms/html-field.git",
-                "reference": "039a38182e0df0ab4e514b92b7459d9037658757"
+                "reference": "c800c237ba685b64ffa4b7999429e816e520cc3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/html-field/zipball/039a38182e0df0ab4e514b92b7459d9037658757",
-                "reference": "039a38182e0df0ab4e514b92b7459d9037658757",
+                "url": "https://api.github.com/repos/craftcms/html-field/zipball/c800c237ba685b64ffa4b7999429e816e520cc3d",
+                "reference": "c800c237ba685b64ffa4b7999429e816e520cc3d",
                 "shasum": ""
             },
             "require": {
@@ -839,8 +839,8 @@
                 "rss": "https://github.com/craftcms/html-field/commits/main.atom",
                 "source": "https://github.com/craftcms/html-field"
             },
-            "time": "2026-10-29T14:16:38+00:00",
-            "published-time": "2026-10-29T14:17:10+00:00"
+            "time": "2026-11-10T18:26:09+00:00",
+            "published-time": "2026-11-10T18:31:13+00:00"
         },
         {
             "name": "craftcms/laravel-aliases",
@@ -14922,10 +14922,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "craftcms/ckeditor": 20,
-        "craftcms/html-field": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
