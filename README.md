@@ -196,9 +196,7 @@ Craft 6 projects are Laravel applications, so their DDEV project type is `larave
 
 While the Craft 6 ecosystem is in beta:
 
-- `pageContent` is a core Markdown field, because `craftcms/ckeditor` has no Craft 6 release yet.
 - The `cloud` filesystem is a local Laravel disk in `config/filesystems.php`, because `craftcms/cloud` has no Craft 6 release yet.
-- `europa-6` takes `craftcms/ckeditor` and `craftcms/html-field` from their `feature/craft-6` branches, and its own lock pins those commits.
 
 `europa-6` was upgraded from the Craft 5 demo's database without its third-party plugins: no Freeform contact form, no SEOmatic, and the navigation global set became an entry. Its control panel logo and icon come from `cpLogoUrl` and `cpIconUrl` in `config/craft/general.php`.
 

@@ -1,7 +1,7 @@
 # Craft CMS + Next.js Starter (Craft 6)
 
 > [!WARNING]
-> This branch targets Craft 6, which is in beta. Page content uses Craft's core Markdown field until CKEditor supports Craft 6. For production sites, use the Craft 5 version on the `5.x` branch.
+> This branch targets Craft 6, which is in beta. For production sites, use the Craft 5 version on the `5.x` branch.
 
 A minimal, production-ready starter for [Next.js 15](https://nextjs.org) and [Craft CMS](https://craftcms.com/) projects. Check out the [features](#key-features), or [dive right in](#quick-start)!
 
