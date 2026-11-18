@@ -1,6 +1,5 @@
 altTranslationKeyFormat: null
 altTranslationMethod: none
-assetTransformer: legacyTransformsDe49d6294614
 fieldLayouts:
   4278d19f-4684-4b69-accb-a46c7d8a5c32:
     tabs:
@@ -63,6 +62,7 @@ fs: cloud
 handle: media
 hasUrls: true
 name: Media
+propagationMethod: custom
 sortOrder: 1
 subpath: img
 titleTranslationKeyFormat: null

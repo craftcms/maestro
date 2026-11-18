@@ -1,7 +1,7 @@
 # Craft CMS + Blade Starter (Craft 6)
 
 > [!WARNING]
-> This branch targets Craft 6, which is in alpha. Page content uses Craft's core Markdown field until CKEditor supports Craft 6. For production sites, use the Craft 5 version on the `5.x` branch.
+> This branch targets Craft 6, which is in beta. Page content uses Craft's core Markdown field until CKEditor supports Craft 6. For production sites, use the Craft 5 version on the `5.x` branch.
 
 This is a basic blog starter project for [Craft CMS](https://craftcms.com/), with templates written in [Laravel Blade](https://laravel.com/docs/blade) instead of Twig. It's a simple install that requires no database dump, no plugins, and no front-end tooling.
 

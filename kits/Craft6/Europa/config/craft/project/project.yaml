@@ -1,4 +1,4 @@
-dateModified: 1794237078
+dateModified: 1795033141
 elementSources:
   CraftCms\Cms\Asset\Elements\Asset:
     - defaultSort:
@@ -302,5 +302,5 @@ system:
   edition: pro
   name: 'Europa Museum'
   retryDuration: null
-  schemaVersion: 6.0.0.35
+  schemaVersion: 6.0.0.36
   timeZone: America/Los_Angeles

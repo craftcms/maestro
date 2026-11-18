@@ -1,7 +1,7 @@
 # Craft CMS + Nuxt Starter (Craft 6)
 
 > [!WARNING]
-> This branch targets Craft 6, which is in alpha. Page content uses Craft's core Markdown field until CKEditor supports Craft 6. For production sites, use the Craft 5 version on the `5.x` branch.
+> This branch targets Craft 6, which is in beta. Page content uses Craft's core Markdown field until CKEditor supports Craft 6. For production sites, use the Craft 5 version on the `5.x` branch.
 
 A minimal, production-ready starter for [Nuxt 3](https://nuxt.com/) and [Craft CMS](https://craftcms.com/) projects. Check out the [features](#key-features), or [dive right in](#quick-start)!
 

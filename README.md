@@ -162,12 +162,12 @@ The kits of each Craft version share one `composer.lock` in `Craft5/Base` or `Cr
 
 ```bash
 php artisan craft:update 5 --constraint=^5.13.0 --db-database=craft_update
-php artisan craft:update 6 --db-database=craft_update   # the newest alpha within ^6.0.0
+php artisan craft:update 6 --db-database=craft_update   # the newest beta within ^6.0.0-beta.1
 ```
 
 For each lock and project config pair (`twig-5` or `twig-6` for Guestbook, `wordpress-5`, and `nuxt-5` or `astro-6` for Headless), it builds the kit, installs it on the locked version, raises the `craftcms/cms` constraint, runs `composer update` and `craft up`, and syncs the new lock and project config back. Nothing else the install writes, such as `config/license.key`, is synced. A kit whose lock an earlier run already updated still installs on the old lock first, then takes the updated one. Leave out `--constraint` to update within the current one. The database options default to `craft`/`craft` on `127.0.0.1:5432`.
 
-While Craft 6 is in alpha, nearly every alpha changes the schema version, so without the lock a fresh install would pick up a newer alpha than the project config was written with and fail.
+While Craft 6 is in beta, a new beta can change the schema version, so without the lock a fresh install would pick up a newer beta than the project config was written with and fail.
 
 The Tests workflow fails when a kit's project config doesn't match its Craft version.
 
@@ -194,7 +194,7 @@ To change Europa's content or content model, build it, restore `seed.sql` into a
 
 Craft 6 projects are Laravel applications, so their DDEV project type is `laravel`. The Craft 6 layers follow the `craftcms/craft@6.x` skeleton: templates live in `resources/views`, Craft config in `config/craft`, and the web root is `public/`. The Craft 6 project config was produced by upgrading the Craft 5 kit's database with `php artisan craft:up` and writing it out again.
 
-While the Craft 6 ecosystem is in alpha:
+While the Craft 6 ecosystem is in beta:
 
 - `pageContent` is a core Markdown field, because `craftcms/ckeditor` has no Craft 6 release yet.
 - The `cloud` filesystem is a local Laravel disk in `config/filesystems.php`, because `craftcms/cloud` has no Craft 6 release yet.
@@ -207,4 +207,4 @@ The Craft 6 headless backend replaces Craft 5 pieces with their Laravel equivale
 - The GraphQL API is served at `/api` by `routes/api.php`, which `bootstrap/app.php` registers. It runs Craft's `craft` middleware but not `craft.web`, so requests are stateless: they authenticate with a bearer token or fall back to the public schema, and need no CSRF token. Craft 6 no longer reads site URL rules from `config/craft/routes.php`.
 - `config/cors.php` allows the front end (`PRIMARY_SITE_URL`) to call it, replacing `allowedGraphqlOrigins`.
 - `app/Listeners/AddAuthorFieldsToGql.php` adds `authorId` and `authorName` to entries, replacing the `authorinfo` Yii module. Laravel discovers it from its type-hinted event.
-- `@preview` defaults to an empty string, because Craft 6 alpha crashes on a null alias.
+- `@preview` defaults to an empty string, because the Craft 6 alphas crashed on a null alias.

@@ -1,7 +1,0 @@
-driver: craft
-handle: legacyTransformsDe49d6294614
-name: 'Media Transforms'
-settings:
-  disk: null
-  hasUrls: false
-  subpath: img/transforms
